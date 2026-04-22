@@ -1,0 +1,14 @@
+@use '../tools/functions' as fn;
+
+.u-text-body {
+  color: fn.theme('text');
+  font-size: fn.font-size('base');
+}
+
+.u-text-muted {
+  color: fn.theme('text-muted');
+}
+
+.u-text-primary {
+  color: fn.theme('primary');
+}

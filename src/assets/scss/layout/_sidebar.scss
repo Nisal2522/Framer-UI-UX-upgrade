@@ -1,0 +1,6 @@
+@use '../tools/functions' as fn;
+
+.app-sidebar {
+  background: fn.theme('surface');
+  border-right: 1px solid fn.theme('border');
+}

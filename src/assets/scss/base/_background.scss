@@ -1,0 +1,10 @@
+@use '../tools/functions' as fn;
+
+/* Global reusable background helpers. */
+.bg-app-gradient-primary {
+  background: linear-gradient(135deg, fn.theme('primary'), fn.theme('primary-hover'));
+}
+
+.bg-app-surface {
+  background: fn.theme('surface');
+}

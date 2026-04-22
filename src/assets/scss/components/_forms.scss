@@ -1,0 +1,83 @@
+@use '../tools/functions' as fn;
+@use '../tools/mixins';
+
+.form-control {
+  width: 100%;
+  border: 1px solid fn.theme('border');
+  border-radius: fn.radius('md');
+  background: fn.theme('surface');
+  color: fn.theme('text');
+  padding: fn.space(2) fn.space(3);
+  font-size: fn.font-size('md');
+  @include mixins.interactive-transition;
+  @include mixins.focus-ring;
+}
+
+.filter-toolbar {
+  border: 1px solid #e5e7eb;
+  border-radius: fn.radius('xl');
+  background: fn.theme('surface');
+  padding: fn.space(3);
+  box-shadow: fn.shadow('sm');
+}
+
+.filter-toolbar-row {
+  display: flex;
+  flex-direction: column;
+  gap: fn.space(3);
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+  }
+}
+
+.filter-search-wrap {
+  position: relative;
+  flex: 1 1 auto;
+}
+
+.filter-search-icon {
+  pointer-events: none;
+  position: absolute;
+  left: fn.space(3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.filter-search-input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: fn.radius('lg');
+  background: fn.theme('surface');
+  padding: fn.space(2) fn.space(4) fn.space(2) fn.space(10);
+  font-size: fn.font-size('md');
+  outline: none;
+  @include mixins.interactive-transition;
+}
+
+.filter-search-input:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px rgba(3, 46, 161, 0.22);
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: fn.space(2);
+}
+
+.filter-select {
+  border: 1px solid #d1d5db;
+  border-radius: fn.radius('lg');
+  background: fn.theme('surface');
+  padding: fn.space(2) fn.space(3);
+  font-size: fn.font-size('md');
+  outline: none;
+  @include mixins.interactive-transition;
+}
+
+.filter-select:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px rgba(3, 46, 161, 0.22);
+}

@@ -1,0 +1,14 @@
+@use '../tools/functions' as fn;
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid fn.theme('border');
+  padding: fn.space(3);
+  text-align: left;
+}

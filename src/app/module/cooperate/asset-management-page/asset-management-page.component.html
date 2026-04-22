@@ -1,0 +1,306 @@
+    <div class="max-w-full min-w-0 space-y-6">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Asset Management</h1>
+        <p class="mt-1 text-gray-600">Digital lifecycle management for all cooperative assets</p>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div class="border-b border-gray-200">
+          <div class="flex overflow-x-auto">
+            @for (tab of tabs; track tab.id) {
+              <button
+                type="button"
+                (click)="activeTab.set(tab.id)"
+                class="whitespace-nowrap px-6 py-4 text-sm font-medium transition-colors"
+                [ngClass]="{
+                  'u-text-primary border-b-2 u-border-primary': activeTab() === tab.id,
+                  'text-gray-600': activeTab() !== tab.id
+                }"
+              >
+                {{ tab.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="p-6">
+          @if (activeTab() === 'inventory') {
+            <div class="relative min-h-[420px] space-y-6">
+              <div class="flex min-w-0 flex-wrap items-center gap-3">
+                <h3 class="shrink-0 text-base font-semibold text-gray-900">Asset Inventory</h3>
+                <div class="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2">
+                  <button type="button" class="btn btn-sm btn-outline-neutral"><i class="bi bi-funnel"></i> Filter</button>
+                  <div class="relative w-[220px] max-w-full min-w-[10rem] shrink-0 sm:w-[260px]">
+                    <i class="bi bi-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Search assets..." class="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                  </div>
+                  <div class="relative">
+                    <button type="button" (click)="exportMenuOpen.set(!exportMenuOpen())" class="btn btn-sm btn-primary">
+                      <i class="bi bi-download"></i> Export <i class="bi bi-chevron-down"></i>
+                    </button>
+                    @if (exportMenuOpen()) {
+                      <button type="button" aria-hidden="true" class="fixed inset-0 z-10 cursor-default bg-transparent" (click)="exportMenuOpen.set(false)"></button>
+                      <div class="absolute right-0 top-full z-20 mt-1 w-44 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+                        <button type="button" class="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50" (click)="exportMenuOpen.set(false)">Export as PDF</button>
+                        <button type="button" class="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50" (click)="exportMenuOpen.set(false)">Export as Excel</button>
+                      </div>
+                    }
+                  </div>
+                  @if (!showAddModal()) {
+                    <button type="button" (click)="openAddModal()" class="btn btn-sm btn-primary whitespace-nowrap">
+                      <i class="bi bi-plus-lg"></i> Register New Asset
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="w-full min-w-0 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_4px_24px_-4px_rgba(3,46,161,0.08),0_2px_8px_-2px_rgba(0,0,0,0.06)]">
+                <div class="w-full min-w-0 overflow-hidden">
+                  <table class="w-full table-fixed border-collapse text-left">
+                    <colgroup>
+                      <col class="w-[10%]" /><col class="w-[22%]" /><col class="w-[12%]" /><col class="w-[14%]" /><col class="w-[9%]" />
+                      <col class="w-[9%]" /><col class="w-[9%]" /><col class="w-[10%]" /><col class="w-[5%]" />
+                    </colgroup>
+                    <thead>
+                      <tr class="u-table-brand-head-row">
+                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Asset ID</th>
+                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Asset</th>
+                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Type</th>
+                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Acquisition</th>
+                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Value</th>
+                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Condition</th>
+                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Asset Status</th>
+                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Status</th>
+                        <th class="px-2 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                      @for (asset of assets(); track asset.id; let rowIdx = $index) {
+                        <tr class="group transition-colors u-hover-bg-primary-soft" [class.bg-white]="rowIdx % 2 === 0" [class.bg-slate-50/60]="rowIdx % 2 !== 0">
+                          <td class="min-w-[5.5rem] whitespace-nowrap px-2 py-2.5 align-middle sm:px-3">
+                            <span class="inline-flex whitespace-nowrap rounded-md border u-chip-id px-2 py-0.5 font-mono text-[10px] font-semibold sm:text-xs">{{ asset.id }}</span>
+                          </td>
+                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="line-clamp-2 text-xs font-semibold leading-snug text-gray-900 sm:text-sm">{{ asset.name }}</span></td>
+                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3">
+                            <span class="inline-flex items-center gap-1.5 rounded-md border border-gray-200/90 bg-gray-100 px-2 py-1 text-[11px] font-medium text-gray-800"><i class="bi bi-box-seam opacity-70"></i><span>{{ asset.type }}</span></span>
+                          </td>
+                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="line-clamp-2 text-xs leading-snug text-gray-700">{{ asset.acquisitionMethod }}</span></td>
+                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="text-xs font-semibold tabular-nums text-gray-900 sm:text-sm">{{ asset.value }}</span></td>
+                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3">
+                            <button
+                              type="button"
+                              (click)="openConditionModal(asset)"
+                              class="inline-flex max-w-full items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold transition-opacity hover:opacity-90 sm:text-xs"
+                              [ngClass]="{
+                                'bg-emerald-50 text-emerald-800 border-emerald-200': asset.condition === 'Good',
+                                'bg-blue-50 text-blue-800 border-blue-200': asset.condition === 'Fair',
+                                'bg-orange-50 text-orange-800 border-orange-200': asset.condition !== 'Good' && asset.condition !== 'Fair'
+                              }"
+                            >
+                              {{ asset.condition }}
+                            </button>
+                          </td>
+                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3">
+                            <span
+                              class="inline-flex max-w-full items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold sm:text-xs"
+                              [ngClass]="{
+                                'bg-teal-50 text-teal-800 border-teal-200': asset.assetStatus === 'Active',
+                                'bg-red-50 text-red-800 border-red-200': asset.assetStatus !== 'Active'
+                              }"
+                            >
+                              {{ asset.assetStatus }}
+                            </span>
+                          </td>
+                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3">
+                            @if (asset.status === 'Verified') {
+                              <span class="inline-flex items-center gap-0.5 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:px-2 sm:text-xs"><i class="bi bi-check-circle-fill"></i><span class="truncate">Verified</span></span>
+                            } @else {
+                              <span class="inline-flex max-w-full items-center gap-0.5 rounded-full border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-900 sm:px-2 sm:text-xs"><i class="bi bi-clock"></i><span class="truncate">Pending</span></span>
+                            }
+                          </td>
+                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><div class="flex items-center justify-center gap-0.5"><button type="button" class="rounded-lg p-1.5 text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700"><i class="bi bi-eye"></i></button><button type="button" (click)="openEditModal(asset)" class="rounded-lg p-1.5 text-emerald-600 transition-colors hover:bg-emerald-50 hover:text-emerald-700"><i class="bi bi-pencil"></i></button></div></td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                <div class="flex items-start gap-3">
+                  <i class="bi bi-exclamation-circle mt-0.5 text-blue-600"></i>
+                  <p class="text-sm text-blue-900"><strong>Note:</strong> Newly registered assets must be verified by the Commune Officer before being marked as "Verified".</p>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (activeTab() === 'usage-log') {
+            <div class="relative min-h-[420px]">
+              <div class="flex w-full flex-col">
+                <div class="flex flex-col gap-2 pb-3 sm:flex-row sm:items-center sm:justify-between">
+                  <h3 class="text-base font-semibold text-gray-900">Usage History</h3>
+                  <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+                    <div class="relative w-full sm:max-w-xs">
+                      <i class="bi bi-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                      <input type="search" [ngModel]="usageHistorySearch()" (ngModelChange)="usageHistorySearch.set($event)" placeholder="Search usage records..." class="w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                    </div>
+                    @if (!usageDrawerOpen()) { <button type="button" (click)="openUsageDrawer()" class="btn btn-sm btn-primary whitespace-nowrap"><i class="bi bi-plus-lg"></i> Record Usage</button> }
+                  </div>
+                </div>
+                <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_4px_24px_-4px_rgba(3,46,161,0.08),0_2px_8px_-2px_rgba(0,0,0,0.06)]">
+                  <div class="w-full min-w-0 overflow-hidden">
+                    <table class="w-full table-fixed border-collapse text-left">
+                      <colgroup><col class="w-[20%]" /><col class="w-[18%]" /><col class="w-[14%]" /><col class="w-[10%]" /><col class="w-[30%]" /><col class="w-[8%]" /></colgroup>
+                      <thead><tr class="u-table-brand-head-row"><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Asset Name</th><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Select Period</th><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">User</th><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Duration</th><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Purpose</th><th class="px-2 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Actions</th></tr></thead>
+                      <tbody class="divide-y divide-gray-100">
+                        @if (filteredUsageLogs().length === 0) {
+                          <tr><td colspan="6" class="px-4 py-10 text-center text-sm text-gray-400">{{ usageLogs().length === 0 ? 'No usage records yet. Click "Record Usage" to get started.' : 'No usage records match your search.' }}</td></tr>
+                        } @else {
+                          @for (log of filteredUsageLogs(); track log.id; let rowIdx = $index) {
+                            <tr
+                              class="group transition-colors u-hover-bg-primary-soft"
+                              [ngClass]="{ 'bg-white': rowIdx % 2 === 0, 'bg-slate-50/60': rowIdx % 2 !== 0 }"
+                            >
+                              <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="line-clamp-2 text-xs font-semibold leading-snug text-gray-900 sm:text-sm">{{ log.assetName }}</span></td>
+                              <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="block line-clamp-2 text-xs leading-snug text-gray-700">{{ formatUsagePeriodRange(log.periodStart, log.periodEnd) }}</span></td>
+                              <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="line-clamp-2 text-xs text-gray-700">{{ log.user }}</span></td>
+                              <td class="whitespace-nowrap px-2 py-2.5 align-middle sm:px-3"><span class="text-xs text-gray-700">{{ log.duration }}</span></td>
+                              <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="block line-clamp-2 text-xs leading-snug text-gray-700">{{ log.purpose }}</span></td>
+                              <td class="px-2 py-2.5 text-center align-middle sm:px-3"><button type="button" (click)="deleteUsage(log.id)" class="rounded-lg p-1.5 text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"><i class="bi bi-trash"></i></button></td>
+                            </tr>
+                          }
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (activeTab() === 'disposal') {
+            <div class="space-y-6">
+              <div class="rounded-lg border border-orange-200 bg-orange-50 p-4"><div class="flex items-start gap-3"><i class="bi bi-exclamation-circle mt-0.5 text-orange-600"></i><p class="text-sm text-orange-900"><strong>Note:</strong> All disposal requests must receive approval from the Commune Officer before proceeding.</p></div></div>
+              <div class="relative min-h-[420px]">
+                <div class="flex w-full flex-col">
+                  <div class="w-full min-w-0 pb-3">
+                    <div class="flex min-w-0 flex-wrap items-center justify-between gap-3">
+                      <h3 class="shrink-0 text-base font-semibold text-gray-900">Submitted Disposal Requests</h3>
+                      <div class="flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-neutral"><i class="bi bi-funnel"></i> Filter</button>
+                        <div class="relative w-[220px] max-w-full min-w-[10rem] shrink-0 sm:w-[260px]"><i class="bi bi-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="search" [ngModel]="disposalSearch()" (ngModelChange)="disposalSearch.set($event)" placeholder="Search requests..." class="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+                        @if (!disposalDrawerOpen()) { <button type="button" (click)="openDisposalDrawer()" class="btn btn-sm btn-primary whitespace-nowrap"><i class="bi bi-plus-lg"></i> New Disposal Request</button> }
+                      </div>
+                    </div>
+                  </div>
+                  <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_4px_24px_-4px_rgba(3,46,161,0.08),0_2px_8px_-2px_rgba(0,0,0,0.06)]">
+                    <div class="w-full min-w-0 overflow-hidden">
+                      <table class="w-full table-fixed border-collapse text-left">
+                        <colgroup><col class="w-[11%]" /><col class="w-[24%]" /><col class="w-[14%]" /><col class="w-[12%]" /><col class="w-[15%]" /><col class="w-[10%]" /></colgroup>
+                        <thead><tr class="u-table-brand-head-row"><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Request ID</th><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Asset Name</th><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Disposal Method</th><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Submitted Date</th><th class="px-2 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Status</th><th class="px-2 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Actions</th></tr></thead>
+                        <tbody class="divide-y divide-gray-100">
+                          @if (filteredDisposalRequests().length === 0) {
+                            <tr><td colspan="6" class="px-4 py-10 text-center text-sm text-gray-400">{{ disposalRequests().length === 0 ? 'No disposal requests yet. Click "New Disposal Request" to get started.' : 'No requests match your search.' }}</td></tr>
+                          } @else {
+                            @for (request of filteredDisposalRequests(); track request.id; let rowIdx = $index) {
+                              <tr
+                                class="group transition-colors u-hover-bg-primary-soft"
+                                [ngClass]="{ 'bg-white': rowIdx % 2 === 0, 'bg-slate-50/60': rowIdx % 2 !== 0 }"
+                              >
+                                <td class="whitespace-nowrap px-2 py-2.5 align-middle sm:px-3"><span class="inline-flex whitespace-nowrap rounded-md border u-chip-id px-2 py-0.5 font-mono text-[10px] font-semibold sm:text-xs">{{ request.id }}</span></td>
+                                <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="line-clamp-2 text-xs font-semibold leading-snug text-gray-900 sm:text-sm">{{ request.assetName }}</span></td>
+                                <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="inline-flex line-clamp-2 items-center rounded-md border border-gray-200/90 bg-gray-100 px-2 py-1 text-[11px] font-medium text-gray-800">{{ request.disposalMethod }}</span></td>
+                                <td class="whitespace-nowrap px-2 py-2.5 align-middle sm:px-3"><span class="text-xs tabular-nums text-gray-700">{{ request.submittedDate }}</span></td>
+                                <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3">@if (request.status === 'Approved') { <span class="inline-flex items-center gap-0.5 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:px-2 sm:text-xs"><i class="bi bi-check-circle-fill"></i><span class="truncate">Approved</span></span> } @else { <span class="inline-flex max-w-full items-center gap-0.5 rounded-full border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-900 sm:px-2 sm:text-xs"><i class="bi bi-clock"></i><span class="truncate">{{ request.status }}</span></span> }</td>
+                                <td class="px-2 py-2.5 text-center align-middle sm:px-3"><button type="button" class="rounded-lg p-1.5 text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700"><i class="bi bi-eye"></i></button></td>
+                              </tr>
+                            }
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (showAddModal()) {
+        <div class="fixed inset-0 z-[1200] bg-black/40 transition-opacity duration-200" [class.opacity-100]="addModalVisible()" [class.opacity-0]="!addModalVisible()" (click)="closeAddModal()"></div>
+        <div class="fixed inset-y-0 right-0 z-[1210] flex w-full max-w-3xl flex-col border-l border-gray-200 bg-gray-50 shadow-2xl transition-transform duration-200 ease-in-out" [class.translate-x-0]="addModalVisible()" [class.translate-x-full]="!addModalVisible()">
+                  <div class="shrink-0 border-b border-white/10 u-bg-primary-gradient px-5 py-3">
+            <div class="flex items-center justify-between">
+              <div><h2 class="text-sm font-semibold text-white">{{ editingAsset() ? 'Edit Asset' : 'Register New Asset' }}</h2>@if (editingAsset()) { <p class="mt-0.5 font-mono text-xs text-white/80">ID: {{ editingAsset() }}</p> }</div>
+              <button type="button" (click)="closeAddModal()" class="rounded-lg p-1.5 text-white/90 transition-colors hover:bg-white/15"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+          <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+            <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div><label class="mb-1 block text-xs font-medium text-gray-600">Asset Type <span class="text-red-500">*</span></label><select [(ngModel)]="assetForm.type" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select type</option><option value="equipment">Equipment</option><option value="vehicle">Vehicle</option><option value="building">Building</option><option value="infrastructure">Infrastructure</option><option value="other">Other</option></select></div>
+              <div><label class="mb-1 block text-xs font-medium text-gray-600">Asset Name <span class="text-red-500">*</span></label><input [(ngModel)]="assetForm.name" type="text" placeholder="Enter asset name" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+              <div><label class="mb-1 block text-xs font-medium text-gray-600">Serial/Identification Number <span class="text-red-500">*</span></label><input [(ngModel)]="assetForm.serialNumber" type="text" placeholder="Enter serial number" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+              <div><label class="mb-1 block text-xs font-medium text-gray-600">Acquisition Date <span class="text-red-500">*</span></label><input [(ngModel)]="assetForm.acquisitionDate" type="date" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+              <div><label class="mb-1 block text-xs font-medium text-gray-600">Acquisition Method <span class="text-red-500">*</span></label><select [(ngModel)]="assetForm.acquisitionMethod" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select method</option><option value="purchased">Purchased</option><option value="pearl">Donated by PEARL</option><option value="other-program">Donated by Other Program</option><option value="government">Government Grant</option><option value="own-funds">Own Funds</option></select></div>
+              <div><label class="mb-1 block text-xs font-medium text-gray-600">Acquisition Cost or Estimated Value <span class="text-red-500">*</span></label><input [(ngModel)]="assetForm.value" type="text" placeholder="e.g., $12,000" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+              <div><label class="mb-1 block text-xs font-medium text-gray-600">Current Location <span class="text-red-500">*</span></label><input [(ngModel)]="assetForm.location" type="text" placeholder="Enter location" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+              <div><label class="mb-1 block text-xs font-medium text-gray-600">Responsible Custodian Name <span class="text-red-500">*</span></label><input [(ngModel)]="assetForm.custodian" type="text" placeholder="Enter custodian name" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+              <div><label class="mb-1 block text-xs font-medium text-gray-600">Asset Status <span class="text-red-500">*</span></label><select [(ngModel)]="assetForm.assetStatus" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select status</option><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+              <div class="md:col-span-2"><label class="mb-1 block text-xs font-medium text-gray-600">Description <span class="text-red-500">*</span></label><textarea [(ngModel)]="assetForm.description" rows="3" placeholder="Describe the asset..." class="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"></textarea></div>
+            </div>
+            <div class="rounded-lg border border-blue-200 bg-blue-50 p-3"><p class="text-sm text-blue-900"><strong>Note:</strong> This asset will be submitted for verification by the Commune Officer.</p></div>
+          </div>
+          <div class="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-white px-5 py-3"><button type="button" (click)="closeAddModal()" class="btn btn-sm btn-outline-neutral">Cancel</button><button type="button" class="btn btn-sm btn-primary">{{ editingAsset() ? 'Update Asset' : 'Register Asset' }}</button></div>
+        </div>
+      }
+
+      @if (showConditionModal()) {
+        <div class="fixed inset-0 z-[1300] flex items-center justify-center overflow-y-auto bg-black/50 p-4">
+          <div class="my-8 w-full max-w-2xl rounded-xl bg-white shadow-2xl">
+            <div class="border-b border-white/10 u-bg-primary-gradient px-6 py-4"><div class="flex items-center justify-between"><h2 class="text-xl font-bold text-white">Update Asset Condition</h2><button type="button" (click)="closeConditionModal()" class="rounded-lg p-2 text-white transition-colors hover:bg-white/20"><i class="bi bi-x-lg"></i></button></div></div>
+            <div class="max-h-[calc(100vh-220px)] overflow-y-auto px-6 py-4">
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div><label class="mb-2 block text-sm font-medium text-gray-700">Select Asset</label><select [(ngModel)]="conditionFormAssetId" class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-transparent u-focus-ring-primary"><option value="">Choose an asset</option>@for (a of assets(); track a.id) { <option [value]="a.id">{{ a.name }}</option> }</select></div>
+                <div><label class="mb-2 block text-sm font-medium text-gray-700">Condition Rating</label><select [(ngModel)]="conditionFormRating" class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select condition</option><option value="good">Good</option><option value="fair">Fair</option><option value="poor">Poor</option><option value="out-of-service">Out of Service</option></select></div>
+                <div><label class="mb-2 block text-sm font-medium text-gray-700">Date Assessed</label><input type="date" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-transparent u-focus-ring-primary" /></div>
+                <div><label class="mb-2 block text-sm font-medium text-gray-700">Upload Photos (Optional)</label><button type="button" class="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"><i class="bi bi-upload"></i> Choose Files</button></div>
+                <div class="md:col-span-2"><label class="mb-2 block text-sm font-medium text-gray-700">Notes</label><textarea rows="3" placeholder="Add any notes about the asset condition..." class="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-transparent u-focus-ring-primary"></textarea></div>
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 border-t border-gray-200 bg-gray-50 px-6 py-4"><button type="button" (click)="closeConditionModal()" class="btn btn-sm btn-outline-neutral">Cancel</button><button type="button" (click)="closeConditionModal()" class="btn btn-sm btn-primary">Update Condition</button></div>
+          </div>
+        </div>
+      }
+
+      @if (usageDrawerOpen()) {
+        <div class="fixed inset-0 z-[1200] bg-black/40 transition-opacity duration-200" [class.opacity-100]="usageDrawerVisible()" [class.opacity-0]="!usageDrawerVisible()" (click)="closeUsageDrawer()"></div>
+        <div class="fixed inset-y-0 right-0 z-[1210] flex w-full max-w-md flex-col border-l border-gray-200 bg-gray-50 shadow-2xl transition-transform duration-200 ease-in-out" [class.translate-x-0]="usageDrawerVisible()" [class.translate-x-full]="!usageDrawerVisible()">
+          <div class="shrink-0 border-b border-white/10 u-bg-primary-gradient px-5 py-3"><div class="flex items-center justify-between"><h4 class="text-sm font-semibold text-white">Record Asset Usage</h4><button type="button" (click)="closeUsageDrawer()" class="rounded-lg p-1.5 text-white/90 hover:bg-white/15"><i class="bi bi-x-lg"></i></button></div></div>
+          <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Asset <span class="text-red-500">*</span></label><select [(ngModel)]="usageForm.assetId" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select asset</option>@for (asset of assets(); track asset.id) { <option [value]="asset.id">{{ asset.name }}</option> }</select></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Select Period <span class="text-red-500">*</span></label><div class="grid grid-cols-1 gap-2 sm:grid-cols-2"><input [(ngModel)]="usageForm.periodStart" type="date" class="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /><input [(ngModel)]="usageForm.periodEnd" type="date" class="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">User (Member Name or Group) <span class="text-red-500">*</span></label><input [(ngModel)]="usageForm.user" type="text" placeholder="Enter member name or group" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Duration <span class="text-red-500">*</span></label><input [(ngModel)]="usageForm.duration" type="text" placeholder="e.g., 4 hours" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Purpose <span class="text-red-500">*</span></label><textarea [(ngModel)]="usageForm.purpose" rows="3" placeholder="Describe the purpose of asset use..." class="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"></textarea></div>
+          </div>
+          <div class="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-white px-5 py-3"><button type="button" (click)="closeUsageDrawer()" class="btn btn-sm btn-outline-neutral">Cancel</button><button type="button" (click)="submitUsageRecord()" class="btn btn-sm btn-primary">Record Usage</button></div>
+        </div>
+      }
+
+      @if (disposalDrawerOpen()) {
+        <div class="fixed inset-0 z-[1200] bg-black/40 transition-opacity duration-200" [class.opacity-100]="disposalDrawerVisible()" [class.opacity-0]="!disposalDrawerVisible()" (click)="closeDisposalDrawer()"></div>
+        <div class="fixed inset-y-0 right-0 z-[1210] flex w-full max-w-md flex-col border-l border-gray-200 bg-gray-50 shadow-2xl transition-transform duration-200 ease-in-out" [class.translate-x-0]="disposalDrawerVisible()" [class.translate-x-full]="!disposalDrawerVisible()">
+          <div class="shrink-0 border-b border-white/10 u-bg-primary-gradient px-5 py-3"><div class="flex items-center justify-between"><h4 class="text-sm font-semibold text-white">Submit Disposal Request</h4><button type="button" (click)="closeDisposalDrawer()" class="rounded-lg p-1.5 text-white/90 hover:bg-white/15"><i class="bi bi-x-lg"></i></button></div></div>
+          <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Asset <span class="text-red-500">*</span></label><select [(ngModel)]="disposalForm.assetId" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select asset for disposal</option>@for (asset of assets(); track asset.id) { <option [value]="asset.id">{{ asset.name }}</option> }</select></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Justification for Disposal <span class="text-red-500">*</span></label><textarea [(ngModel)]="disposalForm.justification" rows="4" placeholder="Explain why this asset needs to be disposed..." class="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"></textarea></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Proposed Disposal Method <span class="text-red-500">*</span></label><select [(ngModel)]="disposalForm.disposalMethod" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select disposal method</option><option value="sell">Sell</option><option value="scrap">Scrap</option><option value="transfer">Transfer</option><option value="write-off">Write Off</option></select></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Upload Valuation Document (Optional)</label><button type="button" class="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"><i class="bi bi-upload"></i> Choose File</button></div>
+          </div>
+          <div class="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-white px-5 py-3"><button type="button" (click)="closeDisposalDrawer()" class="btn btn-sm btn-outline-neutral">Cancel</button><button type="button" (click)="submitDisposalRequest()" class="btn btn-sm btn-primary">Submit Disposal Request</button></div>
+        </div>
+      }
+    </div>
+  

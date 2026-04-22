@@ -1,0 +1,7 @@
+@use '../tools/functions' as fn;
+
+.app-shell {
+  min-height: 100vh;
+  background: fn.theme('surface-muted');
+  color: fn.theme('text');
+}

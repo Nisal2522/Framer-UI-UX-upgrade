@@ -1,0 +1,6 @@
+@use '../tools/functions' as fn;
+
+.app-header {
+  background: fn.theme('surface');
+  border-bottom: 1px solid fn.theme('border');
+}

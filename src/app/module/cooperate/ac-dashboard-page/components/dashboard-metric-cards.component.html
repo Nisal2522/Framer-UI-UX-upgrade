@@ -1,0 +1,29 @@
+<div class="dashboard-card-container rounded-xl bg-gradient-to-br from-[#032EA1] to-[#021c5e] p-4 text-white shadow-lg ring-1 ring-white/10 sm:p-5">
+  <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6">
+    @for (card of cards(); track card.label) {
+      <div class="stat-card min-w-0 rounded-lg bg-white/5 px-2.5 py-2.5 ring-1 ring-white/10">
+        <div class="mb-2 flex items-center justify-between">
+          <p class="stat-card-title text-[10px] font-medium leading-tight text-white/70 sm:text-[11px]">{{ card.label }}</p>
+          <div class="stat-card-icon flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-amber-200/70 bg-white shadow-[0_0_0_1px_rgba(251,191,36,0.18),0_0_10px_rgba(251,191,36,0.28)] transition-transform duration-200 hover:scale-110">
+            <i [ngClass]="['bi', card.icon, 'text-blue-600']"></i>
+          </div>
+        </div>
+        @if (card.badge) {
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="stat-card-value text-xl font-bold tabular-nums sm:text-2xl">{{ card.value }}</span>
+            <span class="badge inline-flex items-center gap-0.5 rounded-md bg-emerald-400/20 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-emerald-100 ring-1 ring-emerald-300/30 sm:text-xs">
+              <i class="bi bi-graph-up-arrow"></i>
+              {{ card.badge }}
+            </span>
+          </div>
+        } @else {
+          <p class="stat-card-value text-xl font-bold tabular-nums sm:text-2xl">{{ card.value }}</p>
+          @if (card.subtext) {
+            <span class="text-[10px] font-medium text-white/50">{{ card.subtext }}</span>
+          }
+        }
+      </div>
+    }
+  </div>
+</div>
+

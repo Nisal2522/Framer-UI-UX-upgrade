@@ -1,0 +1,54 @@
+@use '../tools/functions' as fn;
+
+.u-text-primary {
+  color: fn.theme('primary');
+}
+
+.u-border-primary {
+  border-color: fn.theme('primary');
+}
+
+.u-bg-primary {
+  background-color: fn.theme('primary');
+}
+
+.u-bg-primary-hover:hover {
+  background-color: fn.theme('primary-hover');
+}
+
+.u-bg-primary-gradient {
+  background: linear-gradient(135deg, fn.theme('primary'), #021c5e);
+}
+
+.u-focus-ring-primary:focus {
+  box-shadow: 0 0 0 2px rgba(3, 46, 161, 0.22);
+}
+
+.u-focus-ring-primary:focus,
+.u-focus-ring-primary:focus-visible {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px rgba(3, 46, 161, 0.22);
+}
+
+.u-table-brand-head-row {
+  border-bottom: 1px solid rgba(3, 46, 161, 0.15);
+  background: linear-gradient(to right, rgba(3, 46, 161, 0.07), rgba(3, 46, 161, 0.04), transparent);
+}
+
+.u-hover-bg-primary-soft:hover {
+  background-color: rgba(3, 46, 161, 0.04);
+}
+
+.u-chip-id {
+  border-color: rgba(3, 46, 161, 0.1);
+  background: rgba(3, 46, 161, 0.08);
+  color: fn.theme('primary');
+}
+
+.u-hover-border-primary-soft:hover {
+  border-color: rgba(3, 46, 161, 0.6);
+}
+
+.u-accent-primary {
+  accent-color: fn.theme('primary');
+}

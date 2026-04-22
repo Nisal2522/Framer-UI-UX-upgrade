@@ -1,0 +1,15 @@
+@use '../tools/functions' as fn;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: fn.radius('full');
+  padding: fn.space(1) fn.space(2);
+  font-size: fn.font-size('xs');
+  font-weight: fn.font-weight('semibold');
+}
+
+.badge-success {
+  background: color-mix(in srgb, fn.theme('success') 12%, white);
+  color: fn.theme('success');
+}

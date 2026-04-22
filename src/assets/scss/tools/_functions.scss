@@ -1,0 +1,63 @@
+@use 'sass:map';
+@use '../tokens';
+@use '../themes/current' as active-theme;
+
+@function theme($key, $fallback: null) {
+  @if map.has-key(active-theme.$theme, $key) {
+    @return map.get(active-theme.$theme, $key);
+  }
+
+  @if $fallback != null {
+    @return $fallback;
+  }
+
+  @error 'Unknown theme key: #{$key}';
+}
+
+@function space($key) {
+  @if map.has-key(tokens.$spacing-scale, $key) {
+    @return map.get(tokens.$spacing-scale, $key);
+  }
+
+  @error 'Unknown spacing key: #{$key}';
+}
+
+@function radius($key) {
+  @if map.has-key(tokens.$radius-scale, $key) {
+    @return map.get(tokens.$radius-scale, $key);
+  }
+
+  @error 'Unknown radius key: #{$key}';
+}
+
+@function shadow($key) {
+  @if map.has-key(tokens.$shadow-scale, $key) {
+    @return map.get(tokens.$shadow-scale, $key);
+  }
+
+  @error 'Unknown shadow key: #{$key}';
+}
+
+@function font-size($key) {
+  @if map.has-key(tokens.$font-size-scale, $key) {
+    @return map.get(tokens.$font-size-scale, $key);
+  }
+
+  @error 'Unknown font-size key: #{$key}';
+}
+
+@function font-weight($key) {
+  @if map.has-key(tokens.$font-weight-scale, $key) {
+    @return map.get(tokens.$font-weight-scale, $key);
+  }
+
+  @error 'Unknown font-weight key: #{$key}';
+}
+
+@function layer($key) {
+  @if map.has-key(tokens.$z-index-scale, $key) {
+    @return map.get(tokens.$z-index-scale, $key);
+  }
+
+  @error 'Unknown z-index key: #{$key}';
+}

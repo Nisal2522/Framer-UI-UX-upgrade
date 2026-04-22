@@ -1,0 +1,290 @@
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-[1.6rem] font-bold text-gray-900">Committee Structure</h1>
+          <p class="mt-1 text-[13px] text-gray-600">Manage your cooperative's leadership and committee hierarchy</p>
+        </div>
+        <button
+          type="button"
+          (click)="openAddModal()"
+          class="btn btn-sm btn-primary shadow-md"
+        >
+          <i class="bi bi-plus-lg"></i>
+          Add New Committee
+        </button>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <div class="flex items-start gap-4">
+          <i class="bi bi-calendar-event mt-0.5 shrink-0 text-gray-400"></i>
+          <div class="min-w-0 flex-1">
+            <label for="committee-version-history" class="mb-2 block text-sm font-medium text-gray-700">
+              Committee Version History
+            </label>
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <select
+                id="committee-version-history"
+                [ngModel]="selectedPeriod()"
+                (ngModelChange)="selectedPeriod.set($event)"
+                class="w-full min-w-0 cursor-pointer rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm font-medium text-gray-900 shadow-sm outline-none focus:border-[#032EA1] focus:ring-2 focus:ring-[#032EA1] sm:max-w-xl sm:flex-1"
+                aria-label="Select committee term period"
+              >
+                @for (period of committeePeriods; track period.id) {
+                  <option [value]="period.id">{{ period.label }}</option>
+                }
+              </select>
+              <button
+                type="button"
+                (click)="openEditModal(selectedPeriod())"
+                class="btn btn-sm btn-outline-primary shrink-0"
+              >
+                <i class="bi bi-pencil"></i>
+                Edit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-blue-800 bg-gradient-to-r from-[#032EA1] to-[#021c5e] p-3 text-white shadow-sm">
+        <div class="grid grid-cols-1 gap-2 md:grid-cols-3">
+          <div class="flex items-center justify-center gap-2 rounded-lg bg-white/12 px-3 py-2 text-white ring-1 ring-white/20">
+            <i class="bi bi-people h-4 w-4 opacity-90"></i>
+            <span class="text-xs font-medium text-white/90">Total Committee Members</span>
+            <span class="text-sm font-bold">{{ currentCommittee.length }}</span>
+          </div>
+          <div class="flex items-center justify-center gap-2 rounded-lg bg-white/12 px-3 py-2 text-white ring-1 ring-white/20">
+            <i class="bi bi-calendar-event h-4 w-4 opacity-90"></i>
+            <span class="text-xs font-medium text-white/90">Term Period</span>
+            <span class="text-sm font-bold">2024 - 2026</span>
+          </div>
+          <div class="flex items-center justify-center gap-2 rounded-lg bg-white/12 px-3 py-2 text-white ring-1 ring-white/20">
+            <i class="bi bi-person h-4 w-4 opacity-90"></i>
+            <span class="text-xs font-medium text-white/90">Term Remaining</span>
+            <span class="text-sm font-bold">22 months</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+          <h3 class="font-semibold text-gray-900">Committee organizational chart</h3>
+        </div>
+        <div class="overflow-x-auto p-6">
+          <div class="flex min-w-[720px] flex-col items-center gap-0">
+            <div class="w-44 rounded-xl border-2 border-[#032EA1] bg-white px-3 py-4 text-center shadow-md">
+              <div class="mx-auto h-16 w-16 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
+                <img [src]="portrait(chairman)" [alt]="chairman.fullName" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="h-full w-full object-cover" />
+              </div>
+              <p class="mt-2 text-[11px] font-medium leading-tight text-[#032EA1]">{{ chairman.roleTitle }}</p>
+              <p class="mt-0.5 text-sm font-semibold leading-snug text-gray-900">{{ chairman.fullName }}</p>
+            </div>
+            <div class="h-6 w-px bg-gray-300"></div>
+            <div class="relative h-px w-full max-w-2xl bg-gray-300">
+              <div class="absolute left-1/4 top-0 h-4 w-px -translate-x-1/2 bg-gray-300"></div>
+              <div class="absolute right-1/4 top-0 h-4 w-px translate-x-1/2 bg-gray-300"></div>
+            </div>
+            <div class="flex w-full max-w-3xl flex-row items-start justify-center gap-16">
+              <div class="flex flex-col items-center">
+                <div class="h-4 w-px bg-gray-300"></div>
+                <div class="w-44 rounded-xl border-2 border-[#032EA1] bg-white px-3 py-4 text-center shadow-md">
+                  <div class="mx-auto h-16 w-16 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
+                    <img [src]="portrait(viceChairman)" [alt]="viceChairman.fullName" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="h-full w-full object-cover" />
+                  </div>
+                  <p class="mt-2 text-[11px] font-medium leading-tight text-[#032EA1]">{{ viceChairman.roleTitle }}</p>
+                  <p class="mt-0.5 text-sm font-semibold leading-snug text-gray-900">{{ viceChairman.fullName }}</p>
+                </div>
+                <div class="h-4 w-px bg-gray-300"></div>
+                <div class="relative flex gap-3 pt-2">
+                  <div class="absolute -top-2 left-1/2 h-px w-24 -translate-x-1/2 bg-gray-300"></div>
+                  <div class="w-44 rounded-xl border-2 border-[#032EA1] bg-white px-3 py-4 text-center shadow-md">
+                    <div class="mx-auto h-16 w-16 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
+                      <img [src]="portrait(treasurer)" [alt]="treasurer.fullName" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="h-full w-full object-cover" />
+                    </div>
+                    <p class="mt-2 text-[11px] font-medium leading-tight text-[#032EA1]">{{ treasurer.roleTitle }}</p>
+                    <p class="mt-0.5 text-sm font-semibold leading-snug text-gray-900">{{ treasurer.fullName }}</p>
+                  </div>
+                  <div class="w-44 rounded-xl border-2 border-[#032EA1] bg-white px-3 py-4 text-center shadow-md">
+                    <div class="mx-auto h-16 w-16 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
+                      <img [src]="portrait(trainingCoordinator)" [alt]="trainingCoordinator.fullName" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="h-full w-full object-cover" />
+                    </div>
+                    <p class="mt-2 text-[11px] font-medium leading-tight text-[#032EA1]">{{ trainingCoordinator.roleTitle }}</p>
+                    <p class="mt-0.5 text-sm font-semibold leading-snug text-gray-900">{{ trainingCoordinator.fullName }}</p>
+                  </div>
+                </div>
+                <p class="mt-2 max-w-[200px] text-center text-[10px] text-gray-500">Hanging layout: reports to Vice Chairman</p>
+              </div>
+              <div class="flex flex-col items-center pt-0">
+                <div class="h-4 w-px bg-gray-300"></div>
+                <div class="w-44 rounded-xl border-2 border-[#032EA1] bg-white px-3 py-4 text-center shadow-md">
+                  <div class="mx-auto h-16 w-16 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
+                    <img [src]="portrait(secretary)" [alt]="secretary.fullName" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="h-full w-full object-cover" />
+                  </div>
+                  <p class="mt-2 text-[11px] font-medium leading-tight text-[#032EA1]">{{ secretary.roleTitle }}</p>
+                  <p class="mt-0.5 text-sm font-semibold leading-snug text-gray-900">{{ secretary.fullName }}</p>
+                </div>
+                <div class="h-4 w-px bg-gray-300"></div>
+                <div class="w-36 rounded-xl border-2 border-dashed border-[#032EA1] bg-white px-2 py-3 text-center shadow-md">
+                  <div class="mx-auto h-12 w-12 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
+                    <img [src]="portrait(memberRelationsOfficer)" [alt]="memberRelationsOfficer.fullName" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="h-full w-full object-cover" />
+                  </div>
+                  <p class="mt-2 text-[11px] font-medium leading-tight text-[#032EA1]">{{ memberRelationsOfficer.roleTitle }}</p>
+                  <p class="mt-0.5 text-sm font-semibold leading-snug text-gray-900">{{ memberRelationsOfficer.fullName }}</p>
+                </div>
+                <p class="mt-2 text-[10px] text-gray-500">Assistant branch under Secretary</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @if (showAddModal()) {
+        <div
+          class="fixed inset-0 z-[1200] bg-black/40 transition-opacity duration-200"
+          [ngClass]="{ 'opacity-100': addModalVisible(), 'opacity-0': !addModalVisible() }"
+          aria-hidden="true"
+          (click)="closeAddModal()"
+        ></div>
+        <div
+          class="fixed inset-y-0 right-0 z-[1210] flex w-full max-w-2xl flex-col border-l border-gray-200 bg-gray-50 shadow-2xl transition-transform duration-200 ease-in-out"
+          [ngClass]="{ 'translate-x-0': addModalVisible(), 'translate-x-full': !addModalVisible() }"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="committee-drawer-title"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="shrink-0 border-b border-white/10 bg-gradient-to-br from-[#032EA1] to-[#021c5e] px-5 py-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 id="committee-drawer-title" class="text-sm font-semibold text-white">
+                  @if (editingPeriodId()) {
+                    Edit Committee
+                  } @else {
+                    Add New Committee Member
+                  }
+                </h2>
+                @if (editingPeriodId()) {
+                  <p class="mt-0.5 text-xs text-white/80">{{ selectedEditingPeriodLabel() }}</p>
+                }
+              </div>
+              <button type="button" (click)="closeAddModal()" class="rounded-lg p-1.5 text-white/90 transition-colors hover:bg-white/15" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+            <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
+              <p class="mb-2 text-sm font-semibold text-gray-900">Committee Period</p>
+              <div class="grid grid-cols-1 gap-2.5 md:grid-cols-2">
+                <div>
+                  <label class="mb-1 block text-xs font-medium text-gray-600">From</label>
+                  <input
+                    type="date"
+                    [ngModel]="periodFrom()"
+                    (ngModelChange)="periodFrom.set($event)"
+                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-[13px] outline-none focus:border-transparent focus:ring-2 focus:ring-[#032EA1]"
+                    aria-label="Committee period start date"
+                  />
+                </div>
+                <div>
+                  <label class="mb-1 block text-xs font-medium text-gray-600">To</label>
+                  <input
+                    type="date"
+                    [ngModel]="periodTo()"
+                    (ngModelChange)="periodTo.set($event)"
+                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-[13px] outline-none focus:border-transparent focus:ring-2 focus:ring-[#032EA1]"
+                    aria-label="Committee period end date"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="overflow-hidden rounded-xl border border-gray-200">
+              @for (row of committeeAssignments(); track $index; let index = $index) {
+                <div class="grid border-b border-gray-200 last:border-b-0" style="grid-template-columns: 2rem 1fr 1fr 2.5rem">
+                  <div class="flex select-none items-center justify-center border-r border-gray-200 bg-gray-50 text-center text-xs font-semibold text-gray-400">{{ index + 1 }}</div>
+                  <div class="border-r border-gray-200 px-3 py-2.5">
+                    <select
+                      [ngModel]="row.role"
+                      (ngModelChange)="updateAssignmentRow(index, 'role', $event)"
+                      class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[#032EA1]"
+                    >
+                      <option value="">Role List</option>
+                      <option value="chairman">Chairman</option>
+                      <option value="secretary">Secretary</option>
+                      <option value="treasurer">Treasurer</option>
+                      <option value="auditor">Auditor</option>
+                      <option value="vice-chairman">Vice Chairman</option>
+                      <option value="member">Member</option>
+                    </select>
+                  </div>
+                  <div class="border-r border-gray-200 px-3 py-2.5">
+                    <select
+                      [ngModel]="row.memberId"
+                      (ngModelChange)="updateAssignmentRow(index, 'memberId', $event)"
+                      class="w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[#032EA1]"
+                    >
+                      <option value="">Member List</option>
+                      @for (member of currentCommittee; track member.id) {
+                        <option [value]="member.id">{{ member.fullName }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="flex items-center justify-center">
+                    <button
+                      type="button"
+                      (click)="removeAssignmentRow(index)"
+                      [disabled]="committeeAssignments().length === 1"
+                      class="btn btn-sm btn-ghost-danger p-1.5"
+                      [attr.aria-label]="'Remove row ' + (index + 1)"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="flex justify-start">
+              <button
+                type="button"
+                (click)="addAssignmentRow()"
+                class="btn btn-sm btn-outline-primary"
+              >
+                <i class="bi bi-plus-lg"></i>
+                Add Row
+              </button>
+            </div>
+
+            <div class="rounded-xl border border-gray-200 bg-gray-50 p-3">
+              <label class="inline-flex items-center gap-3 text-sm font-medium text-gray-800">
+                <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-[#032EA1] focus:ring-[#032EA1]" />
+                <span>Set Active Committee</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-white px-5 py-3">
+            <button
+              type="button"
+              (click)="closeAddModal()"
+              class="btn btn-sm btn-outline-neutral"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm btn-primary"
+            >
+              @if (editingPeriodId()) {
+                Update Committee
+              } @else {
+                Submit
+              }
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  

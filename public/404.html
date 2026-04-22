@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <script>
+      // GitHub Pages SPA fallback redirect.
+      // repoName path depth = 1 (e.g. /Framer-UI-UX/)
+      var l = window.location;
+      var isGitHubPages = l.hostname.endsWith("github.io");
+      if (isGitHubPages) {
+        var segmentCount = 1;
+        l.replace(
+          l.protocol +
+            "//" +
+            l.hostname +
+            (l.port ? ":" + l.port : "") +
+            l.pathname
+              .split("/")
+              .slice(0, 1 + segmentCount)
+              .join("/") +
+            "/?/" +
+            l.pathname
+              .slice(1)
+              .split("/")
+              .slice(segmentCount)
+              .join("/")
+              .replace(/&/g, "~and~") +
+            (l.search ? "&" + l.search.slice(1).replace(/&/g, "~and~") : "") +
+            l.hash,
+        );
+      }
+    </script>
+  </head>
+  <body></body>
+</html>

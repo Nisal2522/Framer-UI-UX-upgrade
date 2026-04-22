@@ -1,0 +1,117 @@
+    <div class="grid gap-6 lg:grid-cols-12">
+      <aside class="space-y-3 lg:col-span-4">
+        <h2 class="text-sm font-semibold text-slate-900">Review queue</h2>
+        <input
+          [(ngModel)]="searchText"
+          placeholder="Search plan, AC code, chairman..."
+          class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm"
+        />
+
+        <div class="max-h-[560px] overflow-y-auto rounded-xl border border-slate-200 bg-slate-50">
+          @if (filteredQueue().length === 0) {
+            <p class="p-4 text-sm text-slate-500">No plans found in the support queue.</p>
+          }
+
+          @for (plan of filteredQueue(); track plan.id) {
+            <button
+              type="button"
+              (click)="workflow.setSelectedPlan(plan.id)"
+              class="w-full border-l-4 px-4 py-3 text-left transition hover:bg-slate-100"
+              [class.border-l-[#032EA1]]="workflow.selectedPlanId() === plan.id"
+              [class.border-l-transparent]="workflow.selectedPlanId() !== plan.id"
+              [class.bg-white]="workflow.selectedPlanId() === plan.id"
+            >
+              <p class="text-sm font-semibold text-slate-900">{{ plan.title }}</p>
+              <p class="mt-0.5 text-xs text-slate-500">{{ plan.acCode }} · {{ plan.chairman }} · {{ plan.province }}</p>
+              <span
+                class="mt-2 inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase"
+                [class.bg-amber-100]="plan.status === 'revision_requested'"
+                [class.text-amber-800]="plan.status === 'revision_requested'"
+                [class.bg-emerald-100]="plan.status === 'submitted_support'"
+                [class.text-emerald-800]="plan.status === 'submitted_support'"
+              >
+                {{ plan.status === 'revision_requested' ? 'Revision cycle' : 'Submitted' }}
+              </span>
+            </button>
+          }
+        </div>
+      </aside>
+
+      <section class="lg:col-span-8">
+        @if (workflow.selectedPlan(); as selected) {
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-lg font-semibold text-slate-900">{{ selected.title }}</h3>
+              <p class="text-sm text-slate-500">{{ selected.acCode }} · {{ selected.acName }}</p>
+            </div>
+
+            <div class="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+              Review progress: {{ reviewedCount(selected) }} / {{ selected.sections.length }} sections
+              ({{ completionPct(selected) }}%)
+            </div>
+
+            <div class="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+              @for (section of selected.sections; track section.key) {
+                <div class="rounded-lg border border-slate-200 p-3">
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <p class="font-medium text-slate-900">{{ section.title }}</p>
+                    <label class="inline-flex items-center gap-2 text-xs font-medium text-slate-700">
+                      <input
+                        type="checkbox"
+                        [checked]="section.reviewed"
+                        (change)="workflow.setSectionReviewed(selected.id, section.key, $any($event.target).checked)"
+                      />
+                      Reviewed
+                    </label>
+                  </div>
+
+                  <textarea
+                    [ngModel]="section.comment"
+                    (ngModelChange)="workflow.setSectionComment(selected.id, section.key, $event)"
+                    rows="2"
+                    placeholder="Review comments for this section..."
+                    class="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                  ></textarea>
+                </div>
+              }
+            </div>
+
+            <div class="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+              <p class="text-sm font-medium text-slate-800">Request revision</p>
+              <textarea
+                [(ngModel)]="revisionText"
+                rows="3"
+                placeholder="Mandatory comments for AC Committee..."
+                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              ></textarea>
+
+              @if (errorMessage()) {
+                <p class="text-sm text-rose-700">{{ errorMessage() }}</p>
+              }
+
+              <div class="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  (click)="requestRevision(selected.id)"
+                  class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
+                >
+                  Request revision
+                </button>
+                <button
+                  type="button"
+                  (click)="forwardToMinistry(selected.id)"
+                  class="rounded-lg bg-[#032EA1] px-4 py-2 text-sm font-medium text-white hover:bg-[#0447D4]"
+                >
+                  Forward to Ministry / FAO
+                </button>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <p class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-500">
+            Select a plan from the queue to begin support review.
+          </p>
+        }
+      </section>
+    </div>
+  

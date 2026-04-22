@@ -1,0 +1,43 @@
+    <div class="space-y-3">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Permanent workflow history</h2>
+
+      @if (workflow.historyByPlan().length === 0) {
+        <p class="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">No workflow history yet.</p>
+      }
+
+      <div class="space-y-3">
+        @for (group of workflow.historyByPlan(); track group.plan?.id) {
+          @if (group.plan; as plan) {
+            <section class="overflow-hidden rounded-xl border border-slate-200 bg-white">
+              <button
+                type="button"
+                (click)="toggle(plan.id)"
+                class="flex w-full items-center justify-between gap-3 bg-slate-50 px-4 py-3 text-left"
+              >
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">{{ plan.title }}</p>
+                  <p class="text-xs text-slate-500">{{ plan.acCode }} · {{ group.rows.length }} events</p>
+                </div>
+                <span class="text-xs text-slate-500">{{ isOpen(plan.id) ? 'Collapse' : 'Expand' }}</span>
+              </button>
+
+              @if (isOpen(plan.id)) {
+                <div class="space-y-3 p-4">
+                  @for (row of group.rows; track row.id; let idx = $index) {
+                    <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <p class="text-sm font-semibold text-slate-900">Step {{ idx + 1 }} — {{ row.status }}</p>
+                        <time class="text-xs text-slate-500">{{ row.at | date: 'medium' }}</time>
+                      </div>
+                      <p class="mt-1 text-xs text-slate-600">{{ row.actor }}</p>
+                      <p class="mt-2 text-sm text-slate-700">{{ row.note }}</p>
+                    </div>
+                  }
+                </div>
+              }
+            </section>
+          }
+        }
+      </div>
+    </div>
+  

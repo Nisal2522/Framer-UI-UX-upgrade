@@ -1,0 +1,18 @@
+$font-family-base: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+$font-size-scale: (
+  xs: 0.75rem,
+  sm: 0.8125rem,
+  md: 0.875rem,
+  base: 1rem,
+  lg: 1.125rem,
+  xl: 1.25rem,
+  2xl: 1.5rem
+);
+
+$font-weight-scale: (
+  normal: 400,
+  medium: 500,
+  semibold: 600,
+  bold: 700
+);

@@ -1,0 +1,94 @@
+    <section class="space-y-3">
+      <header class="px-1">
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Crop Calendar</h1>
+        <p class="mt-1 text-sm text-slate-500">Seasonal planting, growing, and harvesting timeline by region and crop cycle.</p>
+      </header>
+
+      <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <header class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-gradient-to-r from-[#f8fbff] to-[#eef4ff] px-4 py-3.5">
+          <p class="text-sm font-semibold text-[#1f3d7a]">Annual Cycle Overview</p>
+          <div class="flex items-center gap-2 text-xs font-medium text-slate-600">
+            <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5">
+              <span class="h-2.5 w-7 rounded-sm bg-[#1f6f43]"></span>
+              <span>Planting</span>
+            </span>
+            <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5">
+              <span class="h-2.5 w-7 rounded-sm bg-[#6c4a2f]"></span>
+              <span>Harvesting</span>
+            </span>
+            <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5">
+              <span class="h-[2px] w-7 bg-[#4b5563]"></span>
+              <span>Growing</span>
+            </span>
+          </div>
+        </header>
+
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[1180px] border-separate border-spacing-0">
+            <thead>
+              <tr>
+                <th class="w-44 bg-[#1b3768] px-3 py-2.5 text-left text-sm font-semibold text-white">Region</th>
+                <th class="w-28 bg-[#1b3768] px-3 py-2.5 text-left text-sm font-semibold text-white">Crop</th>
+                <th class="w-24 bg-[#1b3768] px-3 py-2.5 text-left text-sm font-semibold text-white">Cycle</th>
+                <th class="w-56 bg-[#1b3768] px-3 py-2.5 text-left text-sm font-semibold text-white">Details</th>
+                <th class="bg-[#1b3768] p-0">
+                  <div class="grid grid-cols-12">
+                    @for (month of months; track month) {
+                      <span class="border-l border-white/25 px-1 py-2.5 text-center text-xs font-semibold tracking-wide text-white first:border-l-0">{{ month }}</span>
+                    }
+                  </div>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (plan of plans; track plan.id) {
+                @for (cycle of plan.cycles; track cycle.id; let cycleIndex = $index) {
+                  <tr class="hover:bg-[#f8fbff]/70">
+                    @if (cycleIndex === 0) {
+                      <td [attr.rowspan]="plan.cycles.length" class="border-t border-slate-200 bg-[#edf3ff] px-3 py-3 align-top text-sm font-medium text-slate-800">{{ plan.region }}</td>
+                      <td [attr.rowspan]="plan.cycles.length" class="border-t border-slate-200 bg-[#f3f7ff] px-3 py-3 align-top text-sm font-semibold text-[#1f3d7a]">{{ plan.crop }}</td>
+                    }
+
+                    <td class="border-t border-slate-200 bg-[#f8f1de] px-3 py-3 text-sm font-medium text-slate-800">{{ cycle.cycle }}</td>
+                    <td class="border-t border-slate-200 bg-[#fbf6e7] px-3 py-3 text-sm text-slate-700">{{ cycle.details }}</td>
+
+                    <td class="border-t border-slate-200 p-0">
+                      <div class="relative h-[64px] bg-gradient-to-b from-[#ffffff] to-[#f7faff]">
+                        <div class="absolute inset-0 grid grid-cols-12">
+                          @for (month of months; track month) {
+                            <span class="border-l border-slate-200/90 first:border-l-0"></span>
+                          }
+                        </div>
+
+                        <div
+                          class="absolute h-5 rounded-md bg-[#1f6f43]"
+                          [style.left.%]="phaseLeft(cycle.planting)"
+                          [style.width.%]="phaseWidth(cycle.planting)"
+                          style="top:24px"
+                        ></div>
+
+                        <div
+                          class="absolute h-5 rounded-md bg-[#6c4a2f]"
+                          [style.left.%]="phaseLeft(cycle.harvesting)"
+                          [style.width.%]="phaseWidth(cycle.harvesting)"
+                          style="top:24px"
+                        ></div>
+
+                        <div
+                          class="absolute h-[3px] rounded-full bg-[#4b5563]"
+                          [style.left.%]="growingLeft(cycle)"
+                          [style.width.%]="growingWidth(cycle)"
+                          style="top:31px"
+                        ></div>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  

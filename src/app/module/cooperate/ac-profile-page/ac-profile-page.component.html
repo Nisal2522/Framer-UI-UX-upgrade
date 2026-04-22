@@ -1,0 +1,392 @@
+<div class="space-y-6">
+  <div class="rounded-2xl bg-gradient-to-br from-[#032EA1] to-[#021c5e] p-8 shadow-xl">
+    <div class="flex flex-col items-start gap-6 md:flex-row md:items-center">
+      <div class="relative shrink-0">
+        <div class="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white/30 bg-white/20">
+          <img
+            [src]="cooperativeLogoUrl"
+            alt="Prasat Sambor Rung Roeang Modern Agricultural Cooperative logo"
+            class="h-full w-full object-cover"
+          />
+        </div>
+        <button
+          type="button"
+          class="absolute bottom-0 right-0 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg transition-colors hover:bg-gray-100"
+          aria-label="Change cooperative logo"
+        >
+          <i class="bi bi-pencil-fill text-[#032EA1]"></i>
+        </button>
+      </div>
+
+      <div class="min-w-0 flex-1 text-white">
+        <div class="mb-3 flex flex-col gap-3">
+          <h1 class="text-3xl font-bold">Prasat Sambor Rung Roeang Modern Agricultural Cooperative</h1>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-3 py-1 shadow-sm">
+              <i class="bi bi-check-circle-fill text-white"></i>
+              <span class="text-xs font-semibold text-white">Verified</span>
+            </div>
+            <div class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 shadow-sm">
+              <span class="relative inline-flex h-3 w-3 shrink-0">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-200 opacity-75"></span>
+                <span class="relative inline-flex h-3 w-3 rounded-full bg-white"></span>
+              </span>
+              <span class="text-xs font-semibold text-white">Active</span>
+            </div>
+            <div class="inline-flex items-center rounded-full bg-emerald-500 px-3 py-1 shadow-sm">
+              <span class="text-xs font-semibold text-white">MAC</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="mb-4 max-w-2xl text-sm opacity-90">
+          A community-driven agricultural cooperative focused on organic farming practices, sustainable agriculture, and improving the livelihoods of smallholder farmers in Kampong Thom province.
+        </p>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div class="flex min-w-0 items-center gap-2">
+            <i class="bi bi-envelope-fill shrink-0 opacity-80"></i>
+            <a
+              href="mailto:baray.coop@example.com"
+              class="truncate text-sm font-medium underline decoration-white/70 underline-offset-2 transition-colors hover:text-white/95 hover:decoration-white"
+            >
+              baray.coop@example.com
+            </a>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="bi bi-telephone-fill opacity-80"></i>
+            <span class="text-sm">+855 12 345 678</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="bi bi-file-earmark-text-fill opacity-80"></i>
+            <span class="text-sm">AC-KT-2024-157</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (pendingVerification()) {
+    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950" role="status">
+      <strong class="font-semibold">Submitted for verification.</strong> Your changes have been sent to the Commune Officer for review. Updates will appear after approval.
+    </div>
+  }
+
+  <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div class="border-b border-gray-200">
+      <div class="flex overflow-x-auto">
+        @for (tab of tabs; track tab.id) {
+          <button
+            type="button"
+            (click)="activeTab.set(tab.id)"
+            [class]="activeTab() === tab.id ? 'px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors text-[#032EA1] border-b-2 border-[#032EA1]' : 'px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors text-gray-600 hover:text-gray-900'"
+          >
+            {{ tab.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="p-6">
+      @if (activeTab() === 'cooperative-info') {
+        <div class="space-y-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">Cooperative Information</h3>
+            <button
+              type="button"
+              (click)="toggleEditing()"
+              class="btn btn-sm btn-primary"
+            >
+              <i class="bi bi-pencil-square"></i>
+              {{ isEditing() ? 'Cancel' : 'Edit Information' }}
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div class="md:col-span-2">
+              <div class="grid grid-cols-1 gap-3 md:grid-cols-4">
+                <div>
+                  <label class="mb-1 block text-sm font-medium text-gray-700">Address</label>
+                  <input
+                    type="text"
+                    [ngModel]="profile().address"
+                    (ngModelChange)="profile.update((p) => ({ ...p, address: $event }))"
+                    [disabled]="!isEditing()"
+                    class="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none disabled:bg-gray-50 disabled:text-gray-500"
+                    placeholder="Address"
+                  />
+                </div>
+                <div>
+                  <label class="mb-1 block text-sm font-medium text-gray-700">City</label>
+                  <input
+                    type="text"
+                    [ngModel]="profile().city"
+                    (ngModelChange)="profile.update((p) => ({ ...p, city: $event }))"
+                    [disabled]="!isEditing()"
+                    class="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none disabled:bg-gray-50 disabled:text-gray-500"
+                    placeholder="City"
+                  />
+                </div>
+                <div>
+                  <label class="mb-1 block text-sm font-medium text-gray-700">Zip</label>
+                  <input
+                    type="text"
+                    [ngModel]="profile().zip"
+                    (ngModelChange)="profile.update((p) => ({ ...p, zip: $event }))"
+                    [disabled]="!isEditing()"
+                    class="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none disabled:bg-gray-50 disabled:text-gray-500"
+                    placeholder="Zip"
+                  />
+                </div>
+                <div>
+                  <label class="mb-1 block text-sm font-medium text-gray-700">Region</label>
+                  <input
+                    type="text"
+                    [ngModel]="profile().region"
+                    (ngModelChange)="profile.update((p) => ({ ...p, region: $event }))"
+                    [disabled]="!isEditing()"
+                    class="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none disabled:bg-gray-50 disabled:text-gray-500"
+                    placeholder="Region"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Establishment Date</label>
+              <input
+                type="date"
+                [ngModel]="profile().establishmentDate"
+                (ngModelChange)="profile.update((p) => ({ ...p, establishmentDate: $event }))"
+                [disabled]="!isEditing()"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none disabled:bg-gray-50 disabled:text-gray-500"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Legal Status</label>
+              <select
+                [ngModel]="profile().legalStatus"
+                (ngModelChange)="profile.update((p) => ({ ...p, legalStatus: $event }))"
+                [disabled]="!isEditing()"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none disabled:bg-gray-50 disabled:text-gray-500"
+              >
+                <option value="registered">Registered</option>
+                <option value="pending">Pending Registration</option>
+                <option value="renewal">Under Renewal</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Primary Contact Name</label>
+              <input
+                type="text"
+                [ngModel]="profile().contactName"
+                (ngModelChange)="profile.update((p) => ({ ...p, contactName: $event }))"
+                [disabled]="!isEditing()"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none disabled:bg-gray-50 disabled:text-gray-500"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Contact Number</label>
+              <input
+                type="tel"
+                [ngModel]="profile().contactNumber"
+                (ngModelChange)="profile.update((p) => ({ ...p, contactNumber: $event }))"
+                [disabled]="!isEditing()"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none disabled:bg-gray-50 disabled:text-gray-500"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                [ngModel]="profile().email"
+                (ngModelChange)="profile.update((p) => ({ ...p, email: $event }))"
+                [disabled]="!isEditing()"
+                class="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none disabled:bg-gray-50 disabled:text-gray-500"
+                placeholder="Enter cooperative email"
+              />
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="mb-1 block text-sm font-medium text-gray-700">GPS Location</label>
+              <app-cooperative-location-map [singlePinOnly]="true" />
+              <p class="mt-2 text-xs text-gray-500">Map data © OpenStreetMap contributors. Pin: Lat 12.5867° N, Lon 104.8667° E (Kampong Thom area).</p>
+            </div>
+          </div>
+
+          @if (isEditing()) {
+            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <p class="text-sm text-blue-900">
+                <strong>Note:</strong> Changes will be submitted for verification by the Commune Officer. Updates will only be displayed after verification.
+              </p>
+              <button
+                type="button"
+                (click)="submitForVerification()"
+                class="mt-3 rounded-lg bg-[#032EA1] px-6 py-2.5 font-medium text-white transition-colors hover:bg-[#0447D4]"
+              >
+                Submit for Verification
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+      @if (activeTab() === 'dossier') {
+        <div class="relative min-h-[420px] space-y-6">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <h3 class="text-lg font-semibold text-gray-900">Document Dossier</h3>
+            @if (!dossierDrawerOpen()) {
+              <button
+                type="button"
+                (click)="openDossierDrawer()"
+                class="btn btn-sm btn-primary shrink-0"
+              >
+                <i class="bi bi-plus-lg"></i>
+                Add Document
+              </button>
+            }
+          </div>
+
+          <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
+            <table class="w-full">
+              <thead class="border-b border-gray-200 bg-gray-50">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-gray-600">Document Name</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-gray-600">Upload Date</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-gray-600">File Size</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-gray-600">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                @if (dossierDocs().length === 0) {
+                  <tr>
+                    <td colspan="4" class="px-4 py-10 text-center text-sm text-gray-400">
+                      No documents yet. Click "Add Document" to upload.
+                    </td>
+                  </tr>
+                } @else {
+                  @for (doc of dossierDocs(); track doc.id) {
+                    <tr class="transition-colors hover:bg-blue-50/40">
+                      <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ doc.name }}</td>
+                      <td class="px-4 py-3 text-sm text-gray-700">{{ doc.uploadDate }}</td>
+                      <td class="px-4 py-3 text-sm text-gray-700">{{ doc.fileSize }}</td>
+                      <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                          <button type="button" class="rounded p-1 hover:bg-gray-200" aria-label="View document">
+                            <i class="bi bi-file-earmark-text text-gray-600"></i>
+                          </button>
+                          <button
+                            type="button"
+                            (click)="removeDossierDoc(doc.id)"
+                            class="rounded p-1 hover:bg-gray-200"
+                            aria-label="Remove document"
+                          >
+                            <i class="bi bi-trash text-red-600"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+
+          @if (dossierDrawerOpen()) {
+            <div
+              [class]="dossierDrawerVisible() ? 'fixed inset-0 z-[100] bg-black/40 opacity-100 transition-opacity duration-200' : 'fixed inset-0 z-[100] bg-black/40 opacity-0 transition-opacity duration-200'"
+              aria-hidden="true"
+              (click)="closeDossierDrawer()"
+            ></div>
+
+            <div
+              [class]="dossierDrawerVisible() ? 'fixed inset-y-0 right-0 z-[110] flex w-full max-w-md translate-x-0 flex-col border-l border-gray-200 bg-gray-50 shadow-2xl transition-transform duration-200 ease-in-out' : 'fixed inset-y-0 right-0 z-[110] flex w-full max-w-md translate-x-full flex-col border-l border-gray-200 bg-gray-50 shadow-2xl transition-transform duration-200 ease-in-out'"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="dossier-drawer-title"
+              (click)="$event.stopPropagation()"
+            >
+              <div class="shrink-0 border-b border-white/10 bg-gradient-to-br from-[#032EA1] to-[#021c5e] px-5 py-3">
+                <div class="flex items-center justify-between">
+                  <h2 id="dossier-drawer-title" class="text-sm font-semibold text-white">Add Document</h2>
+                  <button
+                    type="button"
+                    (click)="closeDossierDrawer()"
+                    class="rounded-lg p-1.5 text-white/90 transition-colors hover:bg-white/15"
+                    aria-label="Close"
+                  >
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+                <div>
+                  <label class="mb-1 block text-xs font-medium text-gray-600">
+                    Document Name <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., Land Certificate"
+                    [(ngModel)]="dossierDocName"
+                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none"
+                  />
+                </div>
+
+                <input
+                  #dossierFileInput
+                  type="file"
+                  accept=".pdf,.doc,.docx,image/jpeg,image/png,.jpg,.png"
+                  class="sr-only"
+                  (change)="onFileSelected($event)"
+                />
+
+                <div
+                  role="button"
+                  tabindex="0"
+                  (keydown.enter)="openFilePicker()"
+                  (keydown.space)="openFilePicker(); $event.preventDefault()"
+                  (click)="openFilePicker()"
+                  (dragover)="onFileDragOver($event)"
+                  (drop)="onFileDrop($event)"
+                  class="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 bg-white p-8 text-center transition-colors hover:border-[#032EA1]"
+                >
+                  <i class="bi bi-upload mx-auto mb-3 block text-3xl text-gray-400"></i>
+                  <p class="mb-1 text-sm font-medium text-gray-700">Drag and drop to upload here or select file</p>
+                  <p class="text-xs text-gray-500">PDF, DOC, DOCX, JPG, PNG (Max 10MB)</p>
+                  @if (selectedFile) {
+                    <p class="mt-3 truncate px-2 text-xs font-medium text-[#032EA1]">{{ selectedFile.name }}</p>
+                  }
+                </div>
+              </div>
+
+              <div class="flex justify-end gap-2 border-t border-gray-200 bg-white px-5 py-3">
+                <button
+                  type="button"
+                  (click)="closeDossierDrawer()"
+                  class="rounded-lg border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  (click)="submitDossierDocument()"
+                  [disabled]="isDossierSubmitDisabled()"
+                  class="inline-flex items-center gap-1.5 rounded-lg bg-[#032EA1] px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#0447D4] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <i class="bi bi-plus-lg"></i>
+                  Add Document
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>
+  

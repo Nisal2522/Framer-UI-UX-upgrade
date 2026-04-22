@@ -1,0 +1,494 @@
+    <div class="space-y-6 text-[13px] text-gray-700">
+      <div>
+        <h1 class="text-[1.6rem] font-bold text-gray-900">AC Dashboard</h1>
+        <p class="mt-1 text-[13px] text-gray-600">Monitor your cooperative's performance, assets, and progress in one place.</p>
+      </div>
+
+      <app-dashboard-metric-cards [cards]="membershipCards()" />
+
+      <section class="card overflow-hidden rounded-xl border border-slate-200/90 bg-white shadow-sm">
+        <div class="relative border-b border-slate-100 bg-white px-3.5 py-3 sm:px-4 sm:py-3.5">
+          <h2 class="text-[1.1rem] font-semibold tracking-tight text-slate-900">Upcoming trainings</h2>
+        </div>
+        <div class="space-y-2 p-2.5 sm:p-3">
+          @for (t of trainings(); track t.id) {
+            <article class="group relative overflow-hidden rounded-lg border border-slate-200/90 bg-white transition duration-200 hover:border-[#032EA1]/25 hover:shadow-sm">
+              <div class="flex flex-col gap-2.5 p-3 sm:p-3.5 lg:flex-row lg:items-center lg:gap-4">
+                <div class="flex shrink-0 items-center gap-3 lg:w-[76px] lg:flex-col lg:items-stretch lg:gap-0">
+                  <div class="flex h-[4rem] w-[4rem] flex-col items-center justify-center rounded-lg bg-gradient-to-br from-[#032EA1] to-[#0447D4] text-white shadow-sm ring-1 ring-[#032EA1]/25 lg:h-auto lg:min-h-[4.5rem] lg:w-full">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-white/70">{{ t.month }}</span>
+                    <span class="text-xl font-bold tabular-nums leading-none">{{ t.day }}</span>
+                    <span class="text-[10px] font-medium tabular-nums text-white/60">{{ t.year }}</span>
+                  </div>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="text-sm font-semibold leading-snug text-slate-900 sm:text-base">{{ t.title }}</h3>
+                    <span
+                      class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ring-1"
+                      [class.bg-[#032EA1]/8]="!isTrainingFull(t.joinedCount, t.capacity)"
+                      [class.text-[#032EA1]]="!isTrainingFull(t.joinedCount, t.capacity)"
+                      [class.ring-[#032EA1]/15]="!isTrainingFull(t.joinedCount, t.capacity)"
+                      [class.bg-amber-100]="isTrainingFull(t.joinedCount, t.capacity)"
+                      [class.text-amber-800]="isTrainingFull(t.joinedCount, t.capacity)"
+                      [class.ring-amber-200]="isTrainingFull(t.joinedCount, t.capacity)"
+                    >
+                      <span
+                        class="h-1.5 w-1.5 rounded-full"
+                        [class.bg-[#032EA1]]="!isTrainingFull(t.joinedCount, t.capacity)"
+                        [class.bg-amber-500]="isTrainingFull(t.joinedCount, t.capacity)"
+                        aria-hidden="true"
+                      ></span>
+                      {{ trainingBadgeLabel(t.joinedCount, t.capacity) }}
+                    </span>
+                  </div>
+                  <div class="mt-2 flex flex-wrap gap-1.5">
+                    <span class="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-slate-200/80">
+                      <i class="bi bi-clock text-[#032EA1]"></i>
+                      {{ t.time }}
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-slate-200/80">
+                      <i class="bi bi-geo-alt text-[#032EA1]"></i>
+                      <span class="max-w-[220px] truncate sm:max-w-none">{{ t.location }}</span>
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-[#032EA1] ring-1 ring-blue-200/80">
+                      <i class="bi bi-mortarboard"></i>
+                      Presented by {{ t.presenter }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="w-full shrink-0 border-t border-slate-100 pt-2.5 lg:w-[210px] lg:border-t-0 lg:pt-0">
+                  <button
+                    type="button"
+                    (click)="openRegisterModal(t.id)"
+                    [disabled]="isTrainingFull(t.joinedCount, t.capacity)"
+                    class="btn btn-sm btn-primary disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <i class="bi bi-person-plus"></i>
+                    Register
+                  </button>
+                  <p class="mt-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Registered members</p>
+                  <p class="mt-0.5 text-slate-900">
+                    <span class="text-2xl font-bold tabular-nums text-[#032EA1]">{{ t.joinedCount }}</span>
+                  </p>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+
+      @if (registrationTrainingId()) {
+        <div class="fixed inset-0 z-[1200] bg-black/40" (click)="closeRegistration()"></div>
+        <aside class="fixed inset-y-0 right-0 z-[1210] w-full max-w-[720px] border-l border-slate-200 bg-white shadow-2xl">
+          <div class="flex h-full flex-col">
+            <header class="flex items-center justify-between bg-[#032EA1] px-5 py-3.5 text-white">
+              <div>
+                <h3 class="text-sm font-semibold">Register member for training</h3>
+                @if (selectedTraining()) {
+                  <p class="mt-0.5 text-xs text-blue-100">
+                    {{ selectedTraining()!.title }} • {{ selectedTraining()!.month }} {{ selectedTraining()!.day }}, {{ selectedTraining()!.year }} •
+                    {{ selectedTraining()!.time }} • Presenter: {{ selectedTraining()!.presenter }}
+                  </p>
+                }
+              </div>
+              <button type="button" (click)="closeRegistration()" class="rounded-md p-1 text-white/90 hover:bg-white/10 hover:text-white" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </header>
+            <div class="grid flex-1 gap-4 overflow-y-auto p-4 lg:grid-cols-2">
+              <section class="rounded-lg border border-gray-200 bg-slate-50/60 p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <h4 class="text-sm font-semibold text-gray-900">Add members</h4>
+                  <button
+                    type="button"
+                    (click)="addAllMembersToTraining()"
+                    [disabled]="!selectedTraining() || availableSeats() <= 0 || filteredMembers().length === 0"
+                    class="btn btn-sm btn-outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <i class="bi bi-plus-lg"></i>
+                    Add All
+                  </button>
+                </div>
+                <p class="mt-1 text-xs text-gray-500">{{ availableSeats() }} seats available</p>
+                <div class="mt-3">
+                  <label class="block">
+                    <span class="mb-1 block text-xs font-medium text-gray-600">Search members</span>
+                    <div class="relative">
+                      <i class="bi bi-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                      <input
+                        [ngModel]="memberSearch()"
+                        (ngModelChange)="memberSearch.set($event)"
+                        placeholder="Search by member name"
+                        class="w-full rounded-md border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-[#032EA1] focus:ring-2 focus:ring-[#032EA1]/20"
+                      />
+                    </div>
+                  </label>
+                </div>
+                <div class="mt-3 max-h-[320px] space-y-2 overflow-y-auto pr-1">
+                  @if (filteredMembers().length === 0) {
+                    <p class="rounded-md border border-dashed border-gray-300 bg-white px-3 py-4 text-center text-sm text-gray-500">
+                      No available members match your search.
+                    </p>
+                  } @else {
+                    @for (member of filteredMembers(); track member.id) {
+                      <div class="flex items-center justify-between rounded-md border border-gray-200 bg-white px-3 py-2">
+                        <div>
+                          <p class="text-sm font-semibold text-gray-900">{{ member.name }}</p>
+                          <p class="text-[11px] text-gray-500">{{ member.id }}</p>
+                        </div>
+                        <button
+                          type="button"
+                          (click)="addMemberToTraining(member.id)"
+                          [disabled]="!selectedTraining() || availableSeats() <= 0"
+                          class="btn btn-sm btn-primary disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <i class="bi bi-plus-lg"></i>
+                          Add
+                        </button>
+                      </div>
+                    }
+                  }
+                </div>
+              </section>
+
+              <section class="rounded-lg border border-gray-200 bg-white p-4">
+                <h4 class="text-sm font-semibold text-gray-900">Added members</h4>
+                <p class="mt-0.5 text-xs text-gray-500">
+                  @if (selectedTraining()) {
+                    {{ selectedTraining()!.joinedCount }}/{{ selectedTraining()!.capacity }} registered members
+                  } @else {
+                    No training selected
+                  }
+                </p>
+                <div class="mt-3 max-h-[320px] space-y-2 overflow-y-auto pr-1">
+                  @if (selectedTrainingMembers().length === 0) {
+                    <p class="rounded-md border border-dashed border-gray-300 bg-slate-50 px-3 py-4 text-center text-sm text-gray-500">
+                      No member records yet.
+                    </p>
+                  } @else {
+                    @for (member of selectedTrainingMembers(); track member.id) {
+                      <div class="rounded-md border border-gray-200 px-3 py-2">
+                        <div class="flex items-center justify-between gap-2">
+                          <p class="text-sm font-semibold text-gray-900">{{ member.name }}</p>
+                          <div class="flex items-center gap-2">
+                            <span class="badge inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-200">
+                              <i class="bi bi-patch-check"></i>
+                              Added
+                            </span>
+                            <button
+                              type="button"
+                              (click)="removeMemberFromTraining(member.id)"
+                              class="inline-flex items-center gap-1 rounded-md border border-rose-200 bg-rose-50 px-2 py-0.5 text-[11px] font-semibold text-rose-700 transition hover:bg-rose-100"
+                            >
+                              <i class="bi bi-trash"></i>
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                        <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
+                          <span>{{ member.memberId }}</span>
+                          <span class="text-gray-400">{{ member.registeredAt }}</span>
+                        </div>
+                      </div>
+                    }
+                  }
+                </div>
+              </section>
+            </div>
+            <div class="border-t border-gray-200 bg-white px-5 py-3">
+              <div class="flex justify-end">
+                <button
+                  type="button"
+                  (click)="closeRegistration()"
+                  class="btn btn-sm btn-primary"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      }
+
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div class="card rounded-xl border border-gray-200 bg-white p-5 shadow-sm lg:col-span-2">
+          <div class="mb-5 flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h3 class="text-[1.02rem] font-semibold text-gray-900">Members by Area</h3>
+              <p class="mt-1 text-[12px] text-gray-500">Geographic spread of registered members across Cambodia.</p>
+            </div>
+            <div class="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1 text-[12px] font-medium text-[#0F2F8F]">
+              <i class="bi bi-geo-alt"></i>
+              Total mapped members: {{ totalMappedMembers() }}
+            </div>
+          </div>
+          <div class="grid grid-cols-1 items-stretch gap-3.5 xl:grid-cols-4">
+            <div class="h-full min-h-[295px] overflow-hidden rounded-xl border border-[#0F2F8F]/20 bg-[#F8FBFF] xl:col-span-3">
+              @defer (on viewport) {
+                <app-cooperative-location-map />
+              } @placeholder {
+                <div class="flex h-full min-h-[295px] items-center justify-center bg-slate-100 text-sm text-slate-500">
+                  Loading map...
+                </div>
+              }
+            </div>
+            <div class="h-full rounded-xl border border-gray-200 bg-gradient-to-b from-white to-blue-50/40 p-3.5 xl:col-span-1">
+              <h4 class="mb-2.5 text-[13px] font-semibold text-gray-800">Top Coverage Areas</h4>
+              <div class="space-y-2">
+                @for (area of topCoverageAreas(); track area.area) {
+                  <div class="rounded-lg border border-blue-100 bg-white px-2.5 py-1.5">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="text-[12px] font-medium text-gray-800">{{ area.area }}</span>
+                      <span class="text-[12px] font-semibold text-[#0F2F8F]">{{ area.members }}</span>
+                    </div>
+                    <div class="mt-1.5 h-1.5 rounded-full bg-blue-100">
+                      <div
+                        class="h-1.5 rounded-full bg-[#0F2F8F]"
+                        [style.width.%]="(area.members / maxAreaMembers()) * 100"
+                      ></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <div class="mb-3 flex items-center justify-between">
+            <div>
+              <h3 class="text-[1.02rem] font-semibold text-gray-900">Gender Distribution</h3>
+              <p class="mt-0.5 text-xs text-gray-400">All registered members</p>
+            </div>
+            <span class="rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-[#0F2F8F]">
+              {{ totalMembers() }} total
+            </span>
+          </div>
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-center">
+            <div class="relative mx-auto h-[148px] w-[148px] shrink-0 lg:mx-0">
+              <div
+                class="h-full w-full rounded-full"
+                [style.background]="genderDonutBackground()"
+              ></div>
+              <div class="absolute inset-[17px] flex flex-col items-center justify-center rounded-full bg-white">
+                <span class="text-[34px] font-extrabold leading-none text-gray-900">{{ totalMembers() }}</span>
+                <span class="mt-1 text-[10px] font-medium uppercase tracking-wide text-gray-400">members</span>
+              </div>
+            </div>
+
+            <div class="w-full space-y-3">
+              @for (g of genderData; track g.name) {
+                <div>
+                  <div class="mb-1 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-block h-2.5 w-2.5 rounded-full" [style.background-color]="g.color"></span>
+                      <span class="text-sm font-medium text-gray-700">{{ g.name }}</span>
+                    </div>
+                    <span class="text-sm font-bold" [style.color]="g.color">
+                      {{ g.value }} <span class="font-normal text-gray-400">({{ g.percent }}%)</span>
+                    </span>
+                  </div>
+                  <div class="h-1.5 rounded-full bg-gray-100">
+                    <div class="h-1.5 rounded-full" [style.width.%]="visibleGenderPercent(g.percent)" [style.background-color]="g.color"></div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="card rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+          <div class="mb-3 flex items-center justify-between">
+            <div>
+              <h3 class="text-[1.02rem] font-semibold text-gray-900">Age Group Distribution</h3>
+              <p class="mt-0.5 text-xs text-gray-400">Breakdown by age & gender</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs text-gray-500">
+              <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-2.5 rounded-sm bg-[#0F2F8F]"></span>Male</span>
+              <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-2.5 rounded-sm bg-[#E00025]"></span>Female</span>
+              <span class="flex items-center gap-1"><span class="inline-block h-2.5 w-2.5 rounded-sm bg-[#94A3B8]"></span>Other</span>
+            </div>
+          </div>
+          <div class="rounded-lg border border-gray-100 p-2.5">
+            <div class="relative h-[235px]">
+              <div class="absolute inset-0 flex flex-col justify-between py-2">
+                @for (tick of ageAxisTicks; track tick) {
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 text-right text-[11px] text-gray-400">{{ tick }}</span>
+                    <div class="h-px flex-1 border-t border-dashed border-gray-200"></div>
+                  </div>
+                }
+              </div>
+
+              <div class="absolute inset-0 z-10 ml-10 mr-3 mt-2 mb-8 flex items-end justify-between gap-3">
+                @for (row of ageGroupData; track row.group) {
+                  <div class="flex min-w-0 flex-1 flex-col items-center gap-2">
+                    <div class="flex h-[170px] items-end gap-1.5">
+                      <div class="w-3 rounded-t-sm bg-[#0F2F8F]" [style.height.%]="getAgeBarHeight(row.Male)"></div>
+                      <div class="w-3 rounded-t-sm bg-[#E00025]" [style.height.%]="getAgeBarHeight(row.Female)"></div>
+                      <div class="w-3 rounded-t-sm bg-[#94A3B8]" [style.height.%]="getAgeBarHeight(row.Other)"></div>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-500">{{ row.group }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="mb-6 flex items-center justify-between">
+          <h3 class="text-[1.1rem] font-semibold text-gray-900">Business Plan Status</h3>
+          <i class="bi bi-file-text text-[#032EA1]"></i>
+        </div>
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div>
+            <div class="mb-4 flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+              <div>
+                <p class="text-sm text-gray-600">Current Status</p>
+                <p class="mt-1 text-2xl font-bold text-emerald-700">Approved</p>
+              </div>
+              <i class="bi bi-check-circle-fill text-emerald-600"></i>
+            </div>
+            <div class="space-y-3">
+              <div class="rounded-lg border border-gray-200 p-4">
+                <div class="mb-2 flex items-center justify-between">
+                  <span class="text-sm font-medium text-gray-700">Implementation Progress</span>
+                  <span class="text-lg font-bold text-[#032EA1]">73%</span>
+                </div>
+                <div class="h-3 rounded-full bg-gray-200">
+                  <div class="h-3 rounded-full bg-gradient-to-r from-[#032EA1] to-[#0447D4]" style="width:73%"></div>
+                </div>
+              </div>
+              <div class="rounded-lg border border-gray-200 p-4">
+                <p class="mb-2 text-sm font-medium text-gray-700">Approved Date</p>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <i class="bi bi-calendar3"></i>
+                  <span>March 15, 2024</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h4 class="mb-3 text-sm font-semibold text-gray-700">Upcoming Milestones</h4>
+            <div class="mb-4 space-y-2">
+              @for (m of milestones; track m.name) {
+                <div class="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3">
+                  <div class="flex items-center gap-2">
+                    <i class="bi bi-clock text-blue-600"></i>
+                    <span class="text-sm text-gray-900">{{ m.name }}</span>
+                  </div>
+                  <span class="text-xs text-gray-600">Due: {{ m.due }}</span>
+                </div>
+              }
+            </div>
+            <div class="rounded-lg border border-orange-200 bg-orange-50 p-4">
+              <div class="flex items-start gap-3">
+                <i class="bi bi-exclamation-triangle-fill mt-0.5 text-orange-600"></i>
+                <div>
+                  <p class="text-sm font-semibold text-orange-900">2 Activities Overdue</p>
+                  <p class="mt-1 text-xs text-orange-700">
+                    Progress report submission and farmer training completion require immediate attention.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div class="card rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 class="mb-5 text-[1.02rem] font-semibold text-gray-900">Crop Distribution</h3>
+          <div class="space-y-4">
+            @for (item of cropDistributionData; track item.crop; let i = $index) {
+              <div>
+                <div class="mb-1.5 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-block h-2.5 w-2.5 rounded-full" [style.background-color]="palette[i]"></span>
+                    <span class="text-sm font-medium text-gray-700">{{ item.crop }}</span>
+                  </div>
+                  <span class="text-sm font-bold" [style.color]="palette[i]">
+                    {{ item.expectedYield }}<span class="ml-1 text-xs font-normal text-gray-400">tons/yr</span>
+                  </span>
+                </div>
+                <div class="h-2.5 rounded-full bg-gray-100">
+                  <div class="h-2.5 rounded-full transition-all duration-500" [style.background-color]="palette[i]" [style.width.%]="(item.expectedYield / maxCropYield()) * 100"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="card rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h3 class="mb-5 text-[1.02rem] font-semibold text-gray-900">Livestock Distribution</h3>
+          <div class="space-y-4">
+            @for (item of livestockData; track item.type; let i = $index) {
+              <div>
+                <div class="mb-1.5 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-block h-2.5 w-2.5 rounded-full" [style.background-color]="palette[i]"></span>
+                    <span class="text-sm font-medium text-gray-700">{{ item.type }}</span>
+                  </div>
+                  <span class="text-sm font-bold" [style.color]="palette[i]">
+                    {{ item.expectedYield }}<span class="ml-1 text-xs font-normal text-gray-400">tons/yr</span>
+                  </span>
+                </div>
+                <div class="h-2.5 rounded-full bg-gray-100">
+                  <div class="h-2.5 rounded-full transition-all duration-500" [style.background-color]="palette[i]" [style.width.%]="(item.expectedYield / maxLivestockYield()) * 100"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="card rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="mb-6 flex items-center justify-between">
+          <h3 class="text-[1.02rem] font-semibold text-gray-900">Asset Overview</h3>
+          <i class="bi bi-box-seam text-[#032EA1]"></i>
+        </div>
+        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+          @for (a of assetSummaryCards(); track a.label) {
+            <div class="card rounded-lg border p-4" [ngClass]="a.cardClass">
+              <p class="text-sm text-gray-600">{{ a.label }}</p>
+              <p class="mt-2 text-3xl font-bold" [ngClass]="a.valueClass">{{ a.value }}</p>
+            </div>
+          }
+        </div>
+        <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+          <div class="flex items-start gap-3">
+            <i class="bi bi-exclamation-triangle-fill mt-0.5 text-red-600"></i>
+            <div>
+              <p class="text-sm font-semibold text-red-900">2 Assets Overdue for Maintenance</p>
+              <ul class="mt-2 space-y-1 text-xs text-red-700">
+                <li>• Rice Mill Machine - Last serviced 8 months ago</li>
+                <li>• Water Pump System - Maintenance due 15 days ago</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div class="mb-6 flex items-center justify-between">
+          <h3 class="text-[1.02rem] font-semibold text-gray-900">Knowledge & Training Metrics</h3>
+          <i class="bi bi-book text-[#032EA1]"></i>
+        </div>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+          @for (m of knowledgeMetrics; track m.label) {
+            <div class="card rounded-lg border p-6" [ngClass]="m.cardClass">
+              <i [ngClass]="['bi', m.icon, 'mb-3', 'text-2xl', m.iconClass]"></i>
+              <p class="text-sm text-gray-600">{{ m.label }}</p>
+              <p class="mt-2 text-3xl font-bold text-gray-900">{{ m.value }}</p>
+              <p class="mt-2 text-xs text-gray-500">{{ m.note }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  

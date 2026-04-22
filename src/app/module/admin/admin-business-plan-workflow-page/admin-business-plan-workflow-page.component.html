@@ -1,0 +1,47 @@
+    <div class="space-y-6">
+      <header>
+        <h1 class="text-3xl font-bold tracking-tight text-slate-900">Business plan management</h1>
+        <p class="mt-1 text-sm text-slate-600">
+          Multi-stage workflow for support review, ministry decisions, permanent history, and plan comparison.
+        </p>
+      </header>
+
+      <section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200">
+          <div class="flex overflow-x-auto">
+            @for (item of tabs; track item.id) {
+              <button
+                type="button"
+                (click)="activeTab.set(item.id)"
+                class="whitespace-nowrap border-b-2 px-5 py-3 text-sm font-medium"
+                [class.border-[#032EA1]]="activeTab() === item.id"
+                [class.text-[#032EA1]]="activeTab() === item.id"
+                [class.border-transparent]="activeTab() !== item.id"
+                [class.text-slate-600]="activeTab() !== item.id"
+              >
+                {{ item.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="p-4 sm:p-6">
+          @if (activeTab() === 'support') {
+            <app-admin-workflow-support-tab />
+          }
+
+          @if (activeTab() === 'ministry') {
+            <app-admin-workflow-ministry-tab />
+          }
+
+          @if (activeTab() === 'history') {
+            <app-admin-workflow-history-tab />
+          }
+
+          @if (activeTab() === 'compare') {
+            <app-admin-workflow-compare-tab />
+          }
+        </div>
+      </section>
+    </div>
+  

@@ -1,0 +1,235 @@
+    <div class="relative flex min-h-screen">
+      <img
+        [src]="backgroundImage"
+        alt=""
+        aria-hidden="true"
+        class="fixed inset-0 h-full w-full object-cover"
+      />
+      <div class="absolute inset-0 bg-black/30"></div>
+
+      <div class="relative z-10 hidden w-1/2 lg:flex">
+        <div class="flex flex-col justify-start px-12 pt-8 text-white">
+          <div class="mb-8">
+            <div class="mb-4 flex items-center gap-3">
+              <div class="rounded-lg bg-white/20 p-3">
+                <svg viewBox="0 0 24 24" class="h-10 w-10 text-white" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M7 20h10M12 20V10M12 10c0-3 2-5 5-6 0 3-2 6-5 6ZM12 12c0-3-2-5-5-6 0 3 2 6 5 6"></path>
+                </svg>
+              </div>
+              <div>
+                <h1 class="text-3xl font-bold">AgriCoop Portal</h1>
+                <p class="text-sm text-blue-100">Agricultural Farmer Cooperative Management</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="max-w-md space-y-16">
+            <div class="rounded-lg border border-white/20 bg-white/10 p-6">
+              <div class="flex items-start gap-3">
+                <svg viewBox="0 0 24 24" class="mt-1 h-6 w-6 shrink-0 text-blue-200" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M8.5 7A3.5 3.5 0 1 1 8.5 0a3.5 3.5 0 0 1 0 7ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a3.5 3.5 0 0 1 0 6.75"></path>
+                </svg>
+                <div>
+                  <h3 class="mb-2 text-lg font-semibold">Connecting Communities</h3>
+                  <p class="text-sm text-blue-100">
+                    Bringing Farmers, Cooperatives, and Government together on one unified platform for better collaboration and growth.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-lg border border-white/20 bg-white/10 p-6">
+              <div class="flex items-start gap-3">
+                <svg viewBox="0 0 24 24" class="mt-1 h-6 w-6 shrink-0 text-blue-200" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                </svg>
+                <div>
+                  <h3 class="mb-2 text-lg font-semibold">Streamlined Management</h3>
+                  <p class="text-sm text-blue-100">
+                    Manage business plans, monitor assets, track farmer profiles, and access comprehensive analytics all in one place.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative z-10 flex flex-1 items-center justify-end p-4 pr-12 sm:p-6 md:p-8">
+        <div class="w-full max-w-md">
+          <div class="mb-8 flex items-center justify-center gap-3 lg:hidden">
+            <div class="rounded-lg bg-[#0F2F8F] p-3">
+              <svg viewBox="0 0 24 24" class="h-8 w-8 text-white" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 20h10M12 20V10M12 10c0-3 2-5 5-6 0 3-2 6-5 6ZM12 12c0-3-2-5-5-6 0 3 2 6 5 6"></path>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold text-white">AgriCoop Portal</h1>
+              <p class="text-sm text-blue-100">Cooperative Management</p>
+            </div>
+          </div>
+
+          <section class="rounded-lg border border-gray-200 bg-white/95 shadow-lg">
+            <div class="space-y-1 p-6 pb-4">
+              <button
+                type="button"
+                (click)="goBack()"
+                class="mb-2 inline-flex items-center gap-1 text-sm text-[#0F2F8F] hover:text-[#0D2A7D]"
+              >
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m12 19-7-7 7-7M19 12H5"></path>
+                </svg>
+                Back
+              </button>
+              <h2 class="text-2xl font-semibold tracking-tight">Welcome back</h2>
+              <p class="text-sm text-gray-500">Sign in to your account to continue</p>
+            </div>
+
+            <div class="p-6 pt-0">
+              <form class="space-y-4" (ngSubmit)="onSubmit()">
+                <div class="space-y-3">
+                  <label class="text-sm font-medium leading-none">Login as</label>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <input
+                        type="radio"
+                        id="cooperative"
+                        name="userType"
+                        value="cooperative"
+                        class="peer sr-only"
+                        [(ngModel)]="userType"
+                      />
+                      <label
+                        for="cooperative"
+                        class="flex cursor-pointer flex-col items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-4 transition-all hover:bg-gray-50 peer-checked:border-[#0F2F8F] peer-checked:bg-blue-50"
+                      >
+                        <svg viewBox="0 0 24 24" class="mb-2 h-6 w-6 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M8.5 7A3.5 3.5 0 1 1 8.5 0a3.5 3.5 0 0 1 0 7ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a3.5 3.5 0 0 1 0 6.75"></path>
+                        </svg>
+                        <span class="text-sm font-medium">Cooperative</span>
+                      </label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        id="admin"
+                        name="userType"
+                        value="admin"
+                        class="peer sr-only"
+                        [(ngModel)]="userType"
+                      />
+                      <label
+                        for="admin"
+                        class="flex cursor-pointer flex-col items-center justify-between rounded-lg border-2 border-gray-200 bg-white p-4 transition-all hover:bg-gray-50 peer-checked:border-[#0F2F8F] peer-checked:bg-blue-50"
+                      >
+                        <svg viewBox="0 0 24 24" class="mb-2 h-6 w-6 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+                        </svg>
+                        <span class="text-sm font-medium">Government Admin</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <label for="email" class="text-sm font-medium leading-none">Email or Username</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="text"
+                    placeholder="Enter your email or username"
+                    required
+                    [(ngModel)]="email"
+                    class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2"
+                  />
+                </div>
+
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <label for="password" class="text-sm font-medium leading-none">Password</label>
+                    <button
+                      type="button"
+                      class="text-sm text-[#0F2F8F] hover:text-[#0D2A7D] hover:underline"
+                      (click)="onForgotPassword()"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                  <div class="relative">
+                    <input
+                      id="password"
+                      name="password"
+                      [type]="showPassword ? 'text' : 'password'"
+                      placeholder="Enter your password"
+                      required
+                      [(ngModel)]="password"
+                      class="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 pr-10 text-sm placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2"
+                    />
+                    <button
+                      type="button"
+                      (click)="togglePassword()"
+                      class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                    >
+                      @if (showPassword) {
+                        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="m3 3 18 18"></path>
+                          <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83"></path>
+                          <path d="M9.88 4.24A10.94 10.94 0 0 1 12 4c7 0 10 8 10 8a15.09 15.09 0 0 1-4.15 5.19"></path>
+                          <path d="M6.61 6.61A15.06 15.06 0 0 0 2 12s3 8 10 8a10.94 10.94 0 0 0 5.27-1.38"></path>
+                        </svg>
+                      } @else {
+                        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                      }
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                  <input
+                    id="remember"
+                    name="rememberMe"
+                    type="checkbox"
+                    [(ngModel)]="rememberMe"
+                    class="h-4 w-4 rounded border-gray-300 text-[#0F2F8F] focus:ring-[#0F2F8F]"
+                  />
+                  <label for="remember" class="cursor-pointer text-sm font-normal">Remember me for 30 days</label>
+                </div>
+
+                <button
+                  type="submit"
+                  class="inline-flex h-11 w-full items-center justify-center rounded-md bg-[#0F2F8F] text-sm font-medium text-white transition-colors hover:bg-[#0D2A7D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0F2F8F] focus-visible:ring-offset-2"
+                >
+                  Sign in
+                </button>
+
+                <div class="mt-4 text-center text-sm text-gray-600">
+                  @if (userType === 'cooperative') {
+                    <p>
+                      New cooperative?
+                      <button
+                        type="button"
+                        class="ml-1 text-sm font-medium text-[#0F2F8F] hover:text-[#0D2A7D] hover:underline"
+                        (click)="onRegisterHelp()"
+                      >
+                        Contact admin for registration
+                      </button>
+                    </p>
+                  } @else {
+                    <p class="text-gray-500">Admin credentials are provided by the system administrator</p>
+                  }
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <div class="mt-8 text-center text-sm text-white">
+            <p>&copy; 2026 AgriCoop Portal. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  

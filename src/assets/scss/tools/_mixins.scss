@@ -1,0 +1,19 @@
+@use 'functions' as fn;
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid fn.theme('ring');
+    outline-offset: 2px;
+  }
+}
+
+@mixin card-surface {
+  background: fn.theme('surface');
+  border: 1px solid fn.theme('border');
+  border-radius: fn.radius('lg');
+  box-shadow: fn.shadow('sm');
+}
+
+@mixin interactive-transition {
+  transition: all 0.2s ease;
+}

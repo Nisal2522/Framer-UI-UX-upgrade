@@ -1,0 +1,221 @@
+    <div class="space-y-6">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Business Plan</h1>
+          <p class="mt-1 text-gray-600">Create and manage your cooperative's business plan</p>
+        </div>
+
+        @if (isNewPlan()) {
+          <button type="button" (click)="navigateHistory()" class="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-[#032EA1]">
+            <i class="bi bi-arrow-left"></i> Back
+          </button>
+        } @else {
+          <button type="button" (click)="navigateNew()" class="btn btn-sm btn-primary shrink-0">
+            <i class="bi bi-plus-lg"></i> Create New Plan
+          </button>
+        }
+      </div>
+
+      @if (!isNewPlan()) {
+        <div class="space-y-6">
+          <div class="rounded-xl bg-gradient-to-br from-[#032EA1] to-[#021c5e] p-4 text-white shadow-lg ring-1 ring-white/10 sm:p-5">
+            <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+              <div class="min-w-0 rounded-lg bg-white/5 px-2.5 py-2.5 ring-1 ring-white/10">
+                <div class="mb-2 flex items-center justify-between"><p class="text-[10px] font-medium leading-tight text-white/70 sm:text-[11px]">Total Submitted</p><div class="flex h-6 w-6 items-center justify-center rounded-md bg-white"><i class="bi bi-file-earmark-text text-blue-600"></i></div></div>
+                <p class="text-xl font-bold tabular-nums sm:text-2xl">{{ pastPlans.length }}</p>
+              </div>
+              <div class="min-w-0 rounded-lg bg-white/5 px-2.5 py-2.5 ring-1 ring-white/10">
+                <div class="mb-2 flex items-center justify-between"><p class="text-[10px] font-medium leading-tight text-white/70 sm:text-[11px]">Approved</p><div class="flex h-6 w-6 items-center justify-center rounded-md bg-white"><i class="bi bi-check-circle text-emerald-600"></i></div></div>
+                <p class="text-xl font-bold tabular-nums sm:text-2xl">{{ approvedCount() }}</p>
+              </div>
+              <div class="min-w-0 rounded-lg bg-white/5 px-2.5 py-2.5 ring-1 ring-white/10">
+                <div class="mb-2 flex items-center justify-between"><p class="text-[10px] font-medium leading-tight text-white/70 sm:text-[11px]">Under Review</p><div class="flex h-6 w-6 items-center justify-center rounded-md bg-white"><i class="bi bi-clock text-orange-500"></i></div></div>
+                <p class="text-xl font-bold tabular-nums sm:text-2xl">{{ reviewCount() }}</p>
+              </div>
+              <div class="min-w-0 rounded-lg bg-white/5 px-2.5 py-2.5 ring-1 ring-white/10">
+                <div class="mb-2 flex items-center justify-between"><p class="text-[10px] font-medium leading-tight text-white/70 sm:text-[11px]">Rejected</p><div class="flex h-6 w-6 items-center justify-center rounded-md bg-white"><i class="bi bi-x-circle text-red-500"></i></div></div>
+                <p class="text-xl font-bold tabular-nums sm:text-2xl">{{ rejectedCount() }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-toolbar rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div class="filter-toolbar-row flex flex-col gap-3 sm:flex-row">
+              <div class="filter-search-wrap relative flex-1">
+                <i class="bi bi-search filter-search-icon pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" [ngModel]="historySearch()" (ngModelChange)="historySearch.set($event)" placeholder="Search by plan title or ID..." class="filter-search-input w-full rounded-lg border border-gray-300 py-2.5 pl-9 pr-4 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[#032EA1]" />
+              </div>
+              <div class="filter-actions flex items-center gap-2">
+                <i class="bi bi-funnel text-gray-400"></i>
+                <select [ngModel]="historyStatusFilter()" (ngModelChange)="historyStatusFilter.set($event)" class="filter-select rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[#032EA1]">
+                  <option value="All">All Statuses</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Under Review">Under Review</option>
+                  <option value="Rejected">Rejected</option>
+                  <option value="Draft">Draft</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            @for (plan of filteredPastPlans(); track plan.id) {
+              <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-center">
+                  <div class="flex min-w-0 flex-1 items-start gap-4">
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#032EA1] to-[#0447D4] shadow">
+                      <i class="bi bi-file-earmark-text text-white"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <div class="mb-1 flex flex-wrap items-center gap-2">
+                        <h3 class="truncate text-base font-semibold text-gray-900">{{ plan.title }}</h3>
+                        <span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium"
+                          [class.bg-emerald-100]="plan.status === 'Approved'" [class.text-emerald-700]="plan.status === 'Approved'" [class.border-emerald-200]="plan.status === 'Approved'"
+                          [class.bg-orange-100]="plan.status === 'Under Review'" [class.text-orange-700]="plan.status === 'Under Review'" [class.border-orange-200]="plan.status === 'Under Review'"
+                          [class.bg-red-100]="plan.status === 'Rejected'" [class.text-red-700]="plan.status === 'Rejected'" [class.border-red-200]="plan.status === 'Rejected'"
+                          [class.bg-gray-100]="plan.status === 'Draft'" [class.text-gray-700]="plan.status === 'Draft'" [class.border-gray-200]="plan.status === 'Draft'"
+                        >
+                          <i class="bi" [class.bi-check-circle]="plan.status === 'Approved'" [class.bi-clock]="plan.status === 'Under Review'" [class.bi-x-circle]="plan.status === 'Rejected'" [class.bi-file-earmark]="plan.status === 'Draft'"></i>
+                          {{ plan.status }}
+                        </span>
+                      </div>
+                      <p class="mb-2 text-xs text-gray-500">Plan ID: {{ plan.id }}</p>
+                      <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-600">
+                        <span class="flex items-center gap-1"><i class="bi bi-calendar3 text-gray-400"></i> Submitted: {{ plan.submittedDate ?? '—' }}</span>
+                        @if (plan.approvedDate) { <span class="flex items-center gap-1"><i class="bi bi-check-circle text-emerald-500"></i> Approved: {{ plan.approvedDate }}</span> }
+                        <span class="font-medium text-[#032EA1]">Budget: {{ plan.budget }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center lg:shrink-0">
+                    @if (plan.status === 'Approved') {
+                      <div class="w-full sm:w-36">
+                        <div class="mb-1 flex justify-between text-xs">
+                          <span class="flex items-center gap-1 text-gray-500"><i class="bi bi-graph-up"></i> Progress</span>
+                          <span class="font-semibold" [class.text-emerald-600]="plan.progress === 100" [class.text-[#032EA1]]="plan.progress !== 100">{{ plan.progress }}%</span>
+                        </div>
+                        <div class="h-1.5 overflow-hidden rounded-full bg-gray-200">
+                          <div class="h-full rounded-full transition-all duration-500" [class.bg-gradient-to-r]="true" [class.from-emerald-500]="plan.progress === 100" [class.to-emerald-600]="plan.progress === 100" [class.from-[#032EA1]]="plan.progress !== 100" [class.to-[#0447D4]]="plan.progress !== 100" [style.width.%]="plan.progress"></div>
+                        </div>
+                      </div>
+                    }
+                    <div class="flex items-center gap-2">
+                      <button type="button" (click)="openPlan(plan)" class="rounded-lg border border-[#032EA1]/20 bg-[#032EA1]/10 p-2.5 text-[#032EA1] transition-colors hover:bg-[#032EA1]/15"><i class="bi bi-eye"></i></button>
+                      <button type="button" class="rounded-lg border border-emerald-200 bg-emerald-50 p-2.5 text-emerald-700 transition-colors hover:bg-emerald-100"><i class="bi bi-download"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-3 border-t border-gray-100 pt-3 text-xs text-gray-500">Reviewer: <span class="font-medium text-gray-700">{{ plan.reviewer }}</span></div>
+              </div>
+            }
+
+            @if (filteredPastPlans().length === 0) {
+              <div class="rounded-xl border border-dashed border-gray-300 bg-white p-12 text-center">
+                <i class="bi bi-file-earmark-text mx-auto mb-3 block text-5xl text-gray-300"></i>
+                <p class="font-medium text-gray-500">No plans match your search</p>
+                <p class="mt-1 text-xs text-gray-400">Try adjusting filters or search terms</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      @if (isNewPlan()) {
+        <div #exportContentRef class="space-y-6">
+          <div class="rounded-xl border border-blue-200 bg-blue-50 p-4">
+            <div class="flex items-start gap-3">
+              <i class="bi bi-exclamation-circle mt-0.5 text-blue-600"></i>
+              <div>
+                <p class="text-sm font-semibold text-blue-900">Business Plan Status: {{ selectedPlan() ? selectedPlan()!.status + ' (Loaded)' : 'Draft' }}</p>
+                <p class="mt-1 text-xs text-blue-700">
+                  @if (selectedPlan()) { Loaded from {{ selectedPlan()!.id }} — {{ selectedPlan()!.title }}. You can review and update before resubmission. }
+                  @else { Complete all sections and submit for review. }
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 class="mb-2 font-semibold text-gray-900">Completion Progress</h3>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs"><span class="text-gray-700">Sections Completed</span><span class="font-semibold text-gray-900">{{ completedCount() }} / {{ sections.length }}</span></div>
+              <div class="h-2 rounded-full bg-gray-200"><div class="h-2 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-500" [style.width.%]="completionPct()"></div></div>
+              <p class="text-xs text-gray-500">Complete all sections before submitting for review</p>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
+            <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3"><i class="bi bi-file-earmark-text text-[#032EA1]"></i><h3 class="font-semibold text-gray-900">Business Plan Template</h3></div>
+                <div class="flex items-center gap-2">
+                  <button type="button" (click)="expandAllSections()" class="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-white">Expand all</button>
+                  <button type="button" (click)="collapseAllSections()" class="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-white">Collapse all</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="divide-y divide-gray-200">
+              @for (section of sections; track section.id) {
+                <div>
+                  <div class="w-full border-l-4 px-4 py-3" [class.bg-white]="!expandedSections().includes(section.id)" [class.bg-sky-50/70]="expandedSections().includes(section.id) && section.id === '1'" [class.bg-violet-50/70]="expandedSections().includes(section.id) && section.id === '2'" [class.bg-emerald-50/70]="expandedSections().includes(section.id) && section.id === '3'" [class.bg-amber-50/70]="expandedSections().includes(section.id) && section.id === '4'" [class.border-l-sky-500]="section.id === '1'" [class.border-l-violet-500]="section.id === '2'" [class.border-l-emerald-500]="section.id === '3'" [class.border-l-amber-500]="section.id === '4'">
+                    <div class="flex items-center justify-between gap-3">
+                      <button type="button" (click)="toggleSection(section.id)" class="flex min-w-0 flex-1 items-center gap-3 text-left transition-opacity hover:opacity-90">
+                        <i class="bi shrink-0 text-gray-600" [class.bi-chevron-down]="expandedSections().includes(section.id)" [class.bi-chevron-right]="!expandedSections().includes(section.id)"></i>
+                        <span class="truncate font-semibold text-gray-900">{{ section.number }}. {{ section.title }}</span>
+                      </button>
+                      <div class="flex shrink-0 items-center gap-2">
+                        <span class="rounded-md px-2 py-1 text-[11px] font-medium" [class.bg-emerald-100]="completedSections().includes(section.id)" [class.text-emerald-700]="completedSections().includes(section.id)" [class.bg-amber-100]="!completedSections().includes(section.id)" [class.text-amber-700]="!completedSections().includes(section.id)">
+                          {{ completedSections().includes(section.id) ? 'Completed' : 'Pending' }}
+                        </span>
+                        <button type="button" (click)="toggleCompletedSection(section.id)" class="rounded-md border px-2.5 py-1 text-xs transition-colors" [class.text-amber-700]="completedSections().includes(section.id)" [class.border-amber-300]="completedSections().includes(section.id)" [class.hover:bg-amber-50]="completedSections().includes(section.id)" [class.text-emerald-700]="!completedSections().includes(section.id)" [class.border-emerald-400]="!completedSections().includes(section.id)" [class.hover:bg-emerald-50]="!completedSections().includes(section.id)">
+                          {{ completedSections().includes(section.id) ? 'Mark Incomplete' : 'Mark Complete' }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  @if (expandedSections().includes(section.id)) {
+                    <div class="bg-gray-50 px-6 py-4">
+                      @if (section.subsections && section.subsections.length > 0) {
+                        <div class="space-y-1">
+                          @for (sub of section.subsections; track sub.id) {
+                            <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
+                              <button type="button" (click)="toggleSubsection(sub.id)" class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50">
+                                <span class="flex min-w-0 items-center gap-2">
+                                  <i class="bi shrink-0 text-gray-600" [class.bi-chevron-down]="expandedSubsections().includes(sub.id)" [class.bi-chevron-right]="!expandedSubsections().includes(sub.id)"></i>
+                                  <span class="truncate font-medium text-gray-900">{{ sub.number }}. {{ sub.title }}</span>
+                                </span>
+                              </button>
+                              @if (expandedSubsections().includes(sub.id)) {
+                                <div class="px-4 pb-4">
+                                  <textarea [ngModel]="sectionContent()[sub.id]" (ngModelChange)="setSectionContent(sub.id, $event)" [placeholder]="'Enter details for ' + sub.title + '...'" rows="4" class="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-transparent focus:ring-2 focus:ring-[#032EA1]"></textarea>
+                                </div>
+                              }
+                            </div>
+                          }
+                        </div>
+                      } @else {
+                        <div class="rounded-lg border border-gray-200 bg-white p-4">
+                          <textarea [ngModel]="sectionContent()[section.id]" (ngModelChange)="setSectionContent(section.id, $event)" [placeholder]="'Enter details for ' + section.title + '...'" rows="6" class="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-transparent focus:ring-2 focus:ring-[#032EA1]"></textarea>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-end gap-3">
+          <button type="button" (click)="exportPdf()" [disabled]="isExportingPdf()" class="btn btn-sm btn-outline-primary disabled:cursor-not-allowed disabled:opacity-60">
+            <i class="bi bi-download"></i> {{ isExportingPdf() ? 'Exporting...' : 'Export PDF' }}
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-neutral"><i class="bi bi-save"></i> Save Draft</button>
+          <button type="button" class="btn btn-sm btn-primary"><i class="bi bi-send"></i> Submit for Review</button>
+        </div>
+      }
+    </div>
+  

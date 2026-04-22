@@ -1,0 +1,89 @@
+    <div class="space-y-6">
+      <header>
+        <h1 class="text-3xl font-bold text-slate-900">{{ pageTitle }}</h1>
+      </header>
+
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2">
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              (click)="moveWeek(-7)"
+              class="inline-flex h-6 w-6 items-center justify-center rounded bg-[#6EA8FE] text-white transition-colors hover:bg-[#4C93FD]"
+              aria-label="Previous week"
+            >
+              <i class="bi bi-caret-left-fill text-[10px]"></i>
+            </button>
+            <button
+              type="button"
+              (click)="moveWeek(7)"
+              class="inline-flex h-6 w-6 items-center justify-center rounded bg-[#6EA8FE] text-white transition-colors hover:bg-[#4C93FD]"
+              aria-label="Next week"
+            >
+              <i class="bi bi-caret-right-fill text-[10px]"></i>
+            </button>
+          </div>
+          <p class="text-sm font-semibold text-slate-900">{{ rangeLabel() }}</p>
+          <button type="button" (click)="goToday()" class="rounded-md border border-[#032EA1]/20 px-3 py-1 text-xs font-semibold text-[#032EA1]">Today</button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <div class="min-w-[840px]">
+            <div class="grid grid-cols-[56px_repeat(5,minmax(0,1fr))] border-b border-slate-200 bg-slate-50">
+              <div></div>
+              @for (day of weekDays(); track day.toISOString()) {
+                <div class="border-l border-slate-200 px-2 py-2">
+                  <p class="text-lg font-semibold" [class.text-emerald-600]="isToday(day)">{{ dayOfMonth(day) }}</p>
+                  <p class="text-xs text-slate-500">{{ dayLabel(day) }}</p>
+                </div>
+              }
+            </div>
+
+            <div class="grid grid-cols-[56px_repeat(5,minmax(0,1fr))]">
+              <div>
+                @for (hour of hours; track hour) {
+                  <div class="h-16 border-t border-slate-200 px-2 pt-1 text-[11px] text-slate-500">{{ formatHour(hour) }}</div>
+                }
+              </div>
+
+              @for (day of weekDays(); track day.toISOString()) {
+                <div class="relative border-l border-slate-200">
+                  @for (hour of hours; track hour) {
+                    <div class="h-16 border-t border-slate-200"></div>
+                  }
+
+                  @for (event of eventsForDay(day); track event.id) {
+                    <article
+                      [class]="eventCardClass(event.category)"
+                      [style.top.px]="eventTop(event)"
+                      [style.height.px]="eventHeight(event)"
+                    >
+                      @if (event.presenter) {
+                        <p class="text-[9px] font-bold uppercase text-white/80">{{ event.presenter }}</p>
+                      }
+                      <p class="line-clamp-2 font-semibold">{{ event.title }}</p>
+                      @if (event.time) {
+                        <p class="text-[10px] text-white/85">{{ event.time }}</p>
+                      }
+                    </article>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <footer class="border-t border-slate-200 bg-slate-50 px-4 py-3">
+          <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Legend</p>
+          <div class="flex flex-wrap gap-3">
+            @for (category of categories; track category.key) {
+              <span class="inline-flex items-center gap-2 text-xs text-slate-600">
+                <span [class]="legendDotClass(category.colorClass)"></span>
+                {{ category.label }}
+              </span>
+            }
+          </div>
+        </footer>
+      </section>
+    </div>
+  

@@ -1,0 +1,404 @@
+    <div class="min-h-screen bg-white">
+      <nav class="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-md">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-blue-100 bg-[#032EA1] shadow-md shadow-blue-500/20">
+              <span class="text-lg text-green-300">🌱</span>
+            </div>
+            <div>
+              <h1 class="bg-gradient-to-r from-[#0F2F8F] to-[#3B5FCC] bg-clip-text text-lg font-bold text-transparent">AgriCoop Portal</h1>
+            </div>
+          </div>
+          <div class="hidden items-center gap-8 md:flex">
+            <a href="#about" class="text-sm text-gray-600 transition-colors hover:text-gray-900">About</a>
+            <a href="#features" class="text-sm text-gray-600 transition-colors hover:text-gray-900">Features</a>
+            <a href="#how-it-works" class="text-sm text-gray-600 transition-colors hover:text-gray-900">How It Works</a>
+            <a href="#impact" class="text-sm text-gray-600 transition-colors hover:text-gray-900">Impact</a>
+          </div>
+          <div class="flex items-center gap-3">
+            <a routerLink="/login" class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:text-gray-900">Login</a>
+            <a routerLink="/login" class="rounded-lg bg-[#0F2F8F] px-5 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-[#0D2A7D]">Get Started</a>
+          </div>
+        </div>
+      </nav>
+
+      <section class="relative h-[90vh] min-h-[600px] overflow-hidden">
+        @for (slide of heroSlides; track $index) {
+          <div
+            class="absolute inset-0 transition-opacity duration-700 ease-in-out"
+            [style.opacity]="currentSlide === $index ? 1 : 0"
+            [style.zIndex]="currentSlide === $index ? 1 : 0"
+          >
+            <img [src]="slide.image" [alt]="slide.title" (error)="onImageError($event)" class="absolute inset-0 h-full w-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
+          </div>
+        }
+
+        <div class="relative z-10 flex h-full items-center">
+          <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="relative max-w-2xl min-h-[320px] md:min-h-[360px]">
+              @for (slide of heroSlides; track $index) {
+                <div
+                  class="absolute inset-0 transition-all duration-700 ease-in-out"
+                  [style.opacity]="currentSlide === $index ? 1 : 0"
+                  [style.transform]="currentSlide === $index ? 'translateY(0)' : 'translateY(20px)'"
+                  [style.pointerEvents]="currentSlide === $index ? 'auto' : 'none'"
+                >
+                  <span class="mb-6 inline-flex items-center gap-2 rounded-full bg-[#0F2F8F]/90 px-3 py-1 text-xs font-medium text-white">
+                    <span>🌿</span>
+                    FAO / PEARL Initiative
+                  </span>
+                  <h1 class="mb-2 text-4xl font-bold leading-tight text-white md:text-6xl">{{ slide.title }}</h1>
+                  <p class="mb-6 text-2xl font-light text-green-400 md:text-3xl">{{ slide.subtitle }}</p>
+                  <p class="mb-8 max-w-xl text-lg leading-relaxed text-gray-300">{{ slide.description }}</p>
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a routerLink="/login" class="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-[#0F2F8F]">Sign In</a>
+              <a routerLink="/dashboard" class="rounded-lg border border-white/40 px-6 py-3 text-sm font-semibold text-white">Open Dashboard</a>
+            </div>
+          </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="absolute bottom-8 left-0 right-0 z-10">
+          <div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-3">
+              @for (slide of heroSlides; track $index) {
+                <button
+                  type="button"
+                  (click)="goToSlide($index)"
+                  [class]="currentSlide === $index ? 'h-2.5 w-10 rounded-full bg-green-500 transition-all duration-300' : 'h-2.5 w-2.5 rounded-full bg-white/40 transition-all duration-300 hover:bg-white/60'"
+                  [attr.aria-label]="'Go to slide ' + ($index + 1)"
+                ></button>
+              }
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" (click)="prevSlide()" class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all hover:bg-white/20" aria-label="Previous slide">
+                <span class="text-lg">‹</span>
+              </button>
+              <button type="button" (click)="nextSlide()" class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all hover:bg-white/20" aria-label="Next slide">
+                <span class="text-lg">›</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="-mt-16 relative z-20 border-b border-gray-100 bg-white">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-2 divide-x divide-gray-100 rounded-2xl border border-gray-100 bg-white shadow-xl lg:grid-cols-4">
+            @for (stat of stats; track stat.label) {
+              <div class="px-6 py-8 text-center">
+                <div class="mb-3">
+                  @if (stat.iconSet === 'bootstrap') {
+                    <i [class]="'bi ' + stat.icon + ' text-lg text-[#0F2F8F]'"></i>
+                  } @else if (stat.iconSet === 'material') {
+                    <span class="material-symbols-outlined text-[#0F2F8F]">{{ stat.icon }}</span>
+                  } @else {
+                    <svg viewBox="0 0 24 24" class="mx-auto h-5 w-5 text-[#0F2F8F]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path [attr.d]="getFeatherPath(stat.icon)"></path>
+                    </svg>
+                  }
+                </div>
+                <p class="text-3xl font-bold text-gray-900">{{ stat.value }}</p>
+                <p class="mt-1 text-sm text-gray-500">{{ stat.label }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="w-full border-y border-slate-100/80 bg-gradient-to-b from-slate-50 via-white to-white py-20 lg:py-28">
+        <div class="mx-auto w-full max-w-[min(100%,1440px)] px-4 sm:px-6 lg:px-10 xl:px-14 2xl:px-16">
+          <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16 xl:gap-20">
+            <div class="lg:col-span-5">
+              <span class="text-xs font-semibold uppercase tracking-[0.2em] text-[#0F2F8F] sm:text-sm">About the Platform</span>
+              <h2 class="mt-4 text-3xl font-bold leading-[1.15] tracking-tight text-[#0c1a3a] sm:text-4xl lg:text-[2.35rem] xl:text-4xl">
+                Bridging Agriculture and Technology for Sustainable Growth
+              </h2>
+              <p class="mt-5 max-w-xl text-base leading-relaxed text-gray-600 sm:text-lg">
+                FOMMP is a comprehensive digital platform developed under the FAO/PEARL initiative
+                to modernize agricultural cooperative management in Cambodia. It connects three
+                key stakeholders in a unified ecosystem.
+              </p>
+              <ul class="mt-8 space-y-5">
+                @for (item of aboutItems; track item.label) {
+                  <li class="flex items-start gap-4">
+                    <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-sky-100/90 shadow-sm shadow-sky-900/5">
+                      @if (item.iconSet === 'material') {
+                        <span class="material-symbols-outlined text-[#0F2F8F]">{{ item.icon }}</span>
+                      } @else if (item.iconSet === 'bootstrap') {
+                        <i [class]="'bi ' + item.icon + ' text-[#0F2F8F]'"></i>
+                      } @else {
+                        <svg viewBox="0 0 24 24" class="h-5 w-5 text-[#0F2F8F]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path [attr.d]="getFeatherPath(item.icon)"></path>
+                        </svg>
+                      }
+                    </div>
+                    <div class="min-w-0 pt-0.5">
+                      <h4 class="text-base font-semibold text-[#0c1a3a]">{{ item.label }}</h4>
+                      <p class="mt-0.5 text-sm leading-snug text-gray-500">{{ item.desc }}</p>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+
+            <div class="w-full lg:col-span-7">
+              <div class="grid min-h-[280px] w-full grid-cols-2 gap-3 sm:min-h-[360px] sm:gap-4 lg:min-h-[420px] xl:min-h-[480px]" style="grid-auto-rows: minmax(0, 1fr);">
+                @for (img of farmerImages; track $index) {
+                  <div
+                    [class]="getFarmerImageCardClass($index)"
+                  >
+                    <img [src]="img.src" [alt]="img.alt" (error)="onImageError($event)" class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent"></div>
+                    <p class="absolute bottom-3 left-3 right-3 text-xs font-medium leading-snug text-white drop-shadow-sm sm:bottom-4 sm:left-4 sm:text-sm">{{ img.caption }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="overflow-hidden py-0">
+        <div class="animate-scroll flex">
+          @for (src of galleryImages; track $index) {
+            <img [src]="src" [alt]="'Farm scene ' + ($index + 1)" (error)="onImageError($event)" class="h-40 w-64 flex-shrink-0 object-cover" loading="lazy" />
+          }
+        </div>
+      </section>
+
+      <section id="features" class="bg-gray-50 py-24">
+        <div class="mx-auto max-w-7xl">
+          <div class="mb-16 text-center">
+            <span class="text-sm font-semibold uppercase tracking-wide text-[#0F2F8F]">Platform Features</span>
+            <h2 class="mb-4 mt-3 text-3xl font-bold text-gray-900 md:text-4xl">Everything You Need in One Platform</h2>
+            <p class="mx-auto max-w-2xl text-lg text-gray-600">Comprehensive tools designed for every level of agricultural cooperative management</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            @for (feature of features; track feature.title) {
+              <div class="group rounded-2xl border border-emerald-100/70 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-md">
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br text-lg text-white shadow-md" [class]="feature.gradientClass">
+                  @if (feature.iconSet === 'bootstrap') {
+                    <i [class]="'bi ' + feature.icon + ' text-lg'"></i>
+                  } @else if (feature.iconSet === 'material') {
+                    <span class="material-symbols-outlined">{{ feature.icon }}</span>
+                  } @else {
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path [attr.d]="getFeatherPath(feature.icon)"></path>
+                    </svg>
+                  }
+                </div>
+                <h3 class="mb-2 text-lg font-bold text-gray-900">{{ feature.title }}</h3>
+                <p class="text-sm leading-relaxed text-gray-500">{{ feature.description }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" class="bg-gradient-to-b from-white to-blue-50/40 py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="mb-16 text-center">
+            <span class="text-sm font-semibold uppercase tracking-wide text-[#0F2F8F]">Process</span>
+            <h2 class="mb-4 mt-3 text-3xl font-bold text-gray-900 md:text-4xl">How It Works</h2>
+            <p class="mx-auto max-w-2xl text-lg text-gray-600">A simple, streamlined workflow for effective cooperative management</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+            @for (step of steps; track step.number) {
+              <div class="relative">
+                <div class="h-full rounded-2xl border-2 border-[#0F2F8F]/20 bg-gradient-to-b from-white to-blue-50/60 p-8 transition-all hover:border-[#0F2F8F]/35 hover:shadow-md">
+                  <div class="mb-4 text-5xl font-bold text-[#0F2F8F]/20">{{ step.number }}</div>
+                  <h3 class="mb-3 text-xl font-bold text-gray-900">{{ step.title }}</h3>
+                  <p class="text-gray-500">{{ step.description }}</p>
+                </div>
+                @if (!$last) {
+                  <div class="absolute -right-4 top-1/2 z-10 hidden -translate-y-1/2 transform lg:block">
+                    <span class="text-2xl text-[#0F2F8F]/40">›</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <section id="impact" class="relative overflow-hidden py-24">
+        <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1920&q=80" alt="Sustainable farming" (error)="onImageError($event)" class="absolute inset-0 h-full w-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/80 to-gray-900/60"></div>
+        <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="max-w-3xl">
+            <span class="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-600/20 px-3 py-1 text-xs font-medium text-green-400">
+              <span>❤</span>
+              Sustainability & Impact
+            </span>
+            <h2 class="mb-6 text-3xl font-bold leading-tight text-white md:text-5xl">Growing Together Towards a Sustainable Future</h2>
+            <p class="mb-10 text-lg leading-relaxed text-gray-300">
+              By digitalizing cooperative management, FOMMP reduces paperwork, improves resource
+              allocation, and empowers farming communities with the data they need to thrive
+              sustainably.
+            </p>
+            <div class="mb-10 grid grid-cols-2 gap-6 md:grid-cols-4">
+              @for (item of impactItems; track item.label) {
+                <div class="text-center">
+                  <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl border border-green-500/20 bg-green-600/20">
+                    @if (item.iconSet === 'bootstrap') {
+                      <i [class]="'bi ' + item.icon + ' text-xl text-green-400'"></i>
+                    } @else if (item.iconSet === 'material') {
+                      <span class="material-symbols-outlined text-green-400">{{ item.icon }}</span>
+                    } @else {
+                      <svg viewBox="0 0 24 24" class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path [attr.d]="getFeatherPath(item.icon)"></path>
+                      </svg>
+                    }
+                  </div>
+                  <p class="text-sm font-medium text-white">{{ item.label }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-gradient-to-b from-white to-blue-50/40 py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="mb-16 text-center">
+            <span class="text-sm font-semibold uppercase tracking-wide text-[#0F2F8F]">Testimonials</span>
+            <h2 class="mb-4 mt-3 text-3xl font-bold text-gray-900 md:text-4xl">Voices from the Field</h2>
+            <p class="mx-auto max-w-2xl text-lg text-gray-600">
+              Hear from the people who use FOMMP every day to manage their cooperatives and farms
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+            @for (testimonial of testimonials; track testimonial.name) {
+              <div class="rounded-2xl border border-[#0F2F8F]/15 bg-white p-8 shadow-sm transition-all hover:border-[#0F2F8F]/30 hover:shadow-md">
+                <p class="mb-4 text-3xl text-[#0F2F8F]/25">"</p>
+                <p class="mb-6 leading-relaxed text-gray-600">{{ testimonial.quote }}</p>
+                <div class="flex items-center gap-3 border-t border-[#0F2F8F]/10 pt-4">
+                  <img [src]="testimonial.image" [alt]="testimonial.name" (error)="onImageError($event)" class="h-11 w-11 rounded-full object-cover" loading="lazy" />
+                  <div>
+                    <p class="text-sm font-semibold text-gray-900">{{ testimonial.name }}</p>
+                    <p class="text-xs text-gray-500">{{ testimonial.role }}</p>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="relative overflow-hidden bg-[#0F2F8F] py-24">
+        <div class="absolute inset-0 opacity-10">
+          <svg class="h-full w-full" viewBox="0 0 800 400" fill="none">
+            <circle cx="200" cy="200" r="300" stroke="white" stroke-width="1"></circle>
+            <circle cx="600" cy="300" r="250" stroke="white" stroke-width="1"></circle>
+            <circle cx="400" cy="100" r="200" stroke="white" stroke-width="1"></circle>
+          </svg>
+        </div>
+        <div class="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 class="mb-6 text-3xl font-bold text-white md:text-5xl">Ready to Transform Your Cooperative?</h2>
+          <p class="mx-auto mb-10 max-w-2xl text-xl text-green-100">
+            Join hundreds of agricultural cooperatives already using FOMMP to improve transparency,
+            efficiency, and sustainable growth.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a routerLink="/login" class="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-lg font-semibold text-green-700 transition-all hover:shadow-2xl">
+              Register Your Cooperative
+              <span>→</span>
+            </a>
+            <a routerLink="/login" class="inline-flex items-center gap-2 rounded-lg border-2 border-white px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-white/10">
+              Sign In
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-gray-100 bg-white py-12">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p class="mb-8 text-center text-sm font-medium uppercase tracking-wide text-gray-400">Supported By</p>
+          <div class="flex flex-wrap items-center justify-center gap-12 opacity-60 grayscale">
+            @for (partner of partners; track partner.name) {
+              <div class="flex items-center gap-2">
+                @if (partner.iconSet === 'material') {
+                  <span class="material-symbols-outlined text-gray-500">{{ partner.icon }}</span>
+                } @else if (partner.iconSet === 'bootstrap') {
+                  <i [class]="'bi ' + partner.icon + ' text-xl text-gray-500'"></i>
+                } @else {
+                  <svg viewBox="0 0 24 24" class="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path [attr.d]="getFeatherPath(partner.icon)"></path>
+                  </svg>
+                }
+                <span class="text-lg font-bold text-gray-700">{{ partner.name }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <footer class="bg-gray-900 pb-8 pt-16 text-gray-400">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 gap-10 border-b border-gray-800 pb-10 md:grid-cols-4">
+            <div class="col-span-1 md:col-span-2">
+              <div class="mb-4 flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-700 bg-[#032EA1]">
+                  <span class="text-lg text-green-300">🌱</span>
+                </div>
+                <div>
+                  <h3 class="bg-gradient-to-r from-[#6B9FFF] to-[#93BFFF] bg-clip-text text-lg font-bold text-transparent">AgriCoop Portal</h3>
+                </div>
+              </div>
+              <p class="mb-6 max-w-md text-sm leading-relaxed text-gray-400">
+                Empowering agricultural cooperatives in Cambodia through digital innovation and
+                transparent management systems. A FAO/PEARL initiative for sustainable development.
+              </p>
+              <div class="flex gap-3">
+                @for (social of socialLinks; track social.name) {
+                  <a [href]="social.href" class="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-800 transition-colors hover:bg-green-600">
+                    <i [class]="'bi ' + social.icon + ' text-sm'"></i>
+                  </a>
+                }
+              </div>
+            </div>
+
+            <div>
+              <h4 class="mb-4 text-sm font-semibold text-white">Quick Links</h4>
+              <ul class="space-y-2.5 text-sm">
+                @for (link of quickLinks; track link.label) {
+                  <li>
+                    <a [routerLink]="link.routerLink" [href]="link.href" class="transition-colors hover:text-white">{{ link.label }}</a>
+                  </li>
+                }
+              </ul>
+            </div>
+
+            <div>
+              <h4 class="mb-4 text-sm font-semibold text-white">Contact Us</h4>
+              <ul class="space-y-3 text-sm">
+                <li class="flex items-start gap-2.5">
+                  <span class="material-symbols-outlined mt-0.5 text-green-500">location_on</span>
+                  <span>Ministry of Agriculture, Phnom Penh, Cambodia</span>
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <i class="bi bi-telephone-fill text-green-500"></i>
+                  <span>+855 23 123 4567</span>
+                </li>
+                <li class="flex items-center gap-2.5">
+                  <i class="bi bi-envelope-fill text-green-500"></i>
+                  <span>support@fommp.gov.kh</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="pt-8 text-center text-xs text-gray-500">
+            <p>© 2026 FOMMP — Farmer Organizations Management and Monitoring Platform. All rights reserved.</p>
+            <p class="mt-1.5">A FAO/PEARL Project Initiative for Cambodia Agricultural Development</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  

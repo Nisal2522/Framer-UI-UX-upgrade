@@ -1,0 +1,64 @@
+@use '../tools/functions' as fn;
+@use '../tools/mixins';
+
+.card {
+  @include mixins.card-surface;
+  padding: fn.space(4);
+}
+
+.card-title {
+  margin: 0 0 fn.space(2);
+  color: fn.theme('text');
+  font-weight: fn.font-weight('semibold');
+}
+
+.dashboard-card-container {
+  border-radius: fn.radius('xl');
+  background: linear-gradient(135deg, fn.theme('primary') 0%, #021c5e 100%);
+  padding: fn.space(4);
+  color: #fff;
+  box-shadow: 0 10px 18px -8px rgba(2, 28, 94, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+
+  @media (min-width: 640px) {
+    padding: fn.space(5);
+  }
+}
+
+.stat-card {
+  min-width: 0;
+  border-radius: fn.radius('lg');
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.stat-card-title {
+  font-size: 10px;
+  font-weight: fn.font-weight('medium');
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.7);
+
+  @media (min-width: 640px) {
+    font-size: 11px;
+  }
+}
+
+.stat-card-value {
+  font-size: fn.font-size(2xl);
+  font-weight: fn.font-weight('bold');
+
+  @media (min-width: 640px) {
+    font-size: fn.font-size(2xl);
+  }
+}
+
+.stat-card-icon {
+  display: flex;
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: fn.radius('md');
+  background: #fff;
+}

@@ -1,0 +1,121 @@
+@if (!isOpen()) {
+  <button
+    type="button"
+    (click)="openChat()"
+    class="fixed bottom-6 right-6 z-30 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#032EA1] text-white shadow-lg transition-colors hover:bg-[#0447D4]"
+    aria-label="Open chatbot"
+  >
+    <i class="bi bi-chat-dots-fill text-lg"></i>
+  </button>
+}
+
+@if (isOpen()) {
+  <div class="fixed bottom-6 right-6 z-30 flex h-[560px] w-[360px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl max-sm:left-4 max-sm:right-4 max-sm:w-auto">
+    <div class="flex items-center justify-between bg-gradient-to-r from-[#032EA1] to-[#0447D4] px-4 py-3 text-white">
+      <div class="flex items-center gap-2">
+        <i class="bi bi-robot text-base"></i>
+        <div>
+          <p class="text-sm font-semibold">Assistant</p>
+          <p class="text-xs text-white/80">{{ modeTitle() }}</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="closeChat()"
+        class="rounded-md p-1.5 transition-colors hover:bg-white/15"
+        aria-label="Close chatbot"
+      >
+        <i class="bi bi-x-lg text-sm"></i>
+      </button>
+    </div>
+
+    <div class="border-b border-gray-200 bg-gray-50 p-2">
+      <div class="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          (click)="setMode('faq')"
+          [class]="mode() === 'faq' ? 'rounded-lg px-3 py-2 text-xs font-medium transition-colors bg-[#032EA1] text-white' : 'rounded-lg px-3 py-2 text-xs font-medium transition-colors border border-gray-300 bg-white text-gray-700 hover:bg-gray-100'"
+        >
+          Ask Me Anything
+        </button>
+        <button
+          type="button"
+          (click)="setMode('admin')"
+          [class]="mode() === 'admin' ? 'rounded-lg px-3 py-2 text-xs font-medium transition-colors bg-[#032EA1] text-white' : 'rounded-lg px-3 py-2 text-xs font-medium transition-colors border border-gray-300 bg-white text-gray-700 hover:bg-gray-100'"
+        >
+          Chat with Admin
+        </button>
+      </div>
+    </div>
+
+    <div class="flex-1 space-y-3 overflow-y-auto bg-gray-50/60 px-3 py-3">
+      @if (mode() === 'faq') {
+        <div class="rounded-xl border border-blue-100 bg-blue-50 p-3">
+          <p class="mb-2 text-xs font-semibold text-[#032EA1]">Quick Questions</p>
+          <div class="flex flex-wrap gap-2">
+            @for (question of preloadedQuestions; track question) {
+              <button
+                type="button"
+                (click)="onQuestionClick(question)"
+                class="rounded-full border border-blue-200 bg-white px-2.5 py-1 text-xs text-blue-800 transition-colors hover:bg-blue-100"
+              >
+                {{ question }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (mode() === 'admin') {
+        <div class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          You are connected to admin assistance. Describe your issue and include relevant details.
+        </div>
+      }
+
+      @for (msg of messages(); track msg.id) {
+        <div [class]="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+          <div
+            [class]="
+              msg.role === 'user'
+                ? 'max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed bg-[#032EA1] text-white'
+                : msg.role === 'admin'
+                  ? 'max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed border border-emerald-200 bg-emerald-50 text-emerald-900'
+                  : 'max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed border border-gray-200 bg-white text-gray-800'
+            "
+          >
+            <div class="mb-1 flex items-center gap-1 text-[11px] opacity-75">
+              @if (msg.role === 'user') {
+                <i class="bi bi-person-fill"></i>
+              } @else {
+                <i class="bi bi-robot"></i>
+              }
+              <span>{{ msg.role === 'user' ? 'You' : msg.role === 'admin' ? 'Admin' : 'Assistant' }}</span>
+            </div>
+            <p>{{ msg.text }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="border-t border-gray-200 bg-white p-3">
+      <div class="flex items-center gap-2">
+        <input
+          type="text"
+          [ngModel]="input()"
+          (ngModelChange)="onInputChange($event)"
+          (keydown)="handleInputKeydown($event)"
+          [placeholder]="mode() === 'faq' ? 'Ask your question...' : 'Type your message to admin...'"
+          class="h-10 flex-1 rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-transparent focus:ring-2 focus:ring-[#032EA1]"
+        />
+        <button
+          type="button"
+          (click)="onSend()"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#032EA1] text-white transition-colors hover:bg-[#0447D4]"
+          aria-label="Send message"
+        >
+          <i class="bi bi-send-fill text-xs"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+}

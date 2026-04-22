@@ -1,0 +1,75 @@
+    <div class="space-y-3">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Ministry / FAO pending decisions</h2>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <table class="w-full min-w-[980px] text-left text-sm">
+          <thead class="bg-slate-50 text-slate-700">
+            <tr>
+              <th class="px-3 py-2">Plan</th>
+              <th class="px-3 py-2">AC</th>
+              <th class="px-3 py-2">Province</th>
+              <th class="px-3 py-2">Decision</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (workflow.ministryQueue().length === 0) {
+              <tr>
+                <td colspan="4" class="px-4 py-8 text-center text-slate-500">No plans pending ministry approval.</td>
+              </tr>
+            }
+
+            @for (plan of workflow.ministryQueue(); track plan.id) {
+              <tr class="border-t border-slate-200 align-top">
+                <td class="px-3 py-3">
+                  <p class="font-semibold text-slate-900">{{ plan.title }}</p>
+                  <p class="text-xs text-slate-500">{{ plan.acName }}</p>
+                </td>
+                <td class="px-3 py-3 font-mono text-xs text-[#032EA1]">{{ plan.acCode }}</td>
+                <td class="px-3 py-3 text-slate-700">{{ plan.province }}</td>
+                <td class="px-3 py-3">
+                  <div class="space-y-2">
+                    <select
+                      [ngModel]="reasonByPlan()[plan.id]"
+                      (ngModelChange)="setReason(plan.id, $event)"
+                      class="h-9 w-64 rounded-lg border border-slate-300 bg-white px-2 text-xs"
+                    >
+                      @for (reason of REJECTION_REASONS; track reason) {
+                        <option [value]="reason">{{ reason }}</option>
+                      }
+                    </select>
+                    <input
+                      [ngModel]="commentByPlan()[plan.id]"
+                      (ngModelChange)="setComment(plan.id, $event)"
+                      placeholder="Rejection explanation (required)"
+                      class="h-9 w-64 rounded-lg border border-slate-300 px-2 text-xs"
+                    />
+
+                    <div class="flex items-center gap-2">
+                      <button
+                        type="button"
+                        (click)="workflow.approveByMinistry(plan.id)"
+                        class="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        (click)="reject(plan.id)"
+                        class="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-rose-700"
+                      >
+                        Reject
+                      </button>
+                    </div>
+
+                    @if (rowErrorByPlan()[plan.id]) {
+                      <p class="text-xs text-rose-700">{{ rowErrorByPlan()[plan.id] }}</p>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  

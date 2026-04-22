@@ -1,0 +1,68 @@
+@use '../tools/functions' as fn;
+@use '../tools/mixins';
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: fn.space(2);
+  border-radius: fn.radius('md');
+  font-weight: fn.font-weight('semibold');
+  @include mixins.interactive-transition;
+  @include mixins.focus-ring;
+}
+
+.btn-sm {
+  min-height: fn.space(10);
+  padding: 0 fn.space(4);
+  font-size: fn.font-size('sm');
+  line-height: 1.1;
+}
+
+.btn-primary {
+  border: 1px solid fn.theme('primary');
+  background: fn.theme('primary');
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: fn.theme('primary-hover');
+  border-color: fn.theme('primary-hover');
+}
+
+.btn-outline-primary {
+  border: 1px solid color-mix(in srgb, fn.theme('secondary') 30%, transparent);
+  background: #fff;
+  color: fn.theme('secondary');
+}
+
+.btn-outline-primary:hover {
+  background: fn.theme('secondary');
+  color: #fff;
+}
+
+.btn-outline-neutral {
+  border: 1px solid fn.theme('border');
+  background: #fff;
+  color: fn.theme('text-muted');
+}
+
+.btn-outline-neutral:hover {
+  background: fn.theme('surface-muted');
+}
+
+.btn-ghost-danger {
+  border: 1px solid transparent;
+  background: transparent;
+  color: fn.theme('danger');
+}
+
+.btn-ghost-danger:hover {
+  background: color-mix(in srgb, fn.theme('danger') 8%, white);
+  color: fn.theme('danger');
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

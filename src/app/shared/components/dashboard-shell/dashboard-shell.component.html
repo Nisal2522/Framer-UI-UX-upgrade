@@ -1,0 +1,390 @@
+    <div class="flex h-screen overflow-hidden bg-gray-50">
+      <aside
+        class="relative hidden border-r border-gray-200 bg-white transition-all duration-300 ease-in-out lg:flex lg:flex-col"
+        [style.width.px]="desktopSidebarCollapsed() ? 72 : 256"
+      >
+        <button
+          type="button"
+          (click)="desktopSidebarCollapsed.set(!desktopSidebarCollapsed())"
+          [attr.aria-label]="desktopSidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+          class="absolute -right-3.5 top-5 z-50 flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 bg-white text-[#0F2F8F] shadow-md transition-all duration-200 hover:border-[#0F2F8F] hover:bg-[#0F2F8F] hover:text-white"
+        >
+          @if (desktopSidebarCollapsed()) {
+            <svg viewBox="0 0 20 20" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m7 4 6 6-6 6"></path>
+            </svg>
+          } @else {
+            <svg viewBox="0 0 20 20" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m13 4-6 6 6 6"></path>
+            </svg>
+          }
+        </button>
+
+        <div class="flex h-[69px] items-center gap-3 overflow-hidden border-b border-gray-200 px-4 py-4">
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-blue-300 bg-[#032EA1] shadow-md shadow-blue-500/20">
+            <i class="bi bi-leaf-fill text-green-400"></i>
+          </div>
+          <div
+            class="min-w-0 overflow-hidden transition-all duration-300"
+            [class.w-0]="desktopSidebarCollapsed()"
+            [class.opacity-0]="desktopSidebarCollapsed()"
+            [class.opacity-100]="!desktopSidebarCollapsed()"
+          >
+            <h1 class="whitespace-nowrap bg-gradient-to-r from-[#0F2F8F] to-[#3B5FCC] bg-clip-text text-base font-bold text-transparent">
+              AgriCoop Portal
+            </h1>
+          </div>
+        </div>
+
+        <nav class="flex-1 overflow-x-hidden overflow-y-auto px-2.5 py-3">
+          <ul class="space-y-0.5">
+            @if (isAdmin()) {
+              @for (item of adminNavigation; track item.path) {
+                <li>
+                  <a
+                    [routerLink]="item.path"
+                    [routerLinkActiveOptions]="{ exact: item.end === true }"
+                    routerLinkActive="bg-[#0F2F8F] text-white shadow-sm"
+                    [attr.title]="desktopSidebarCollapsed() ? item.name : null"
+                    class="flex items-center gap-3 rounded-lg px-2.5 py-2.5 text-sm font-medium text-gray-600 transition-all duration-200 hover:bg-blue-50 hover:text-[#0F2F8F]"
+                  >
+                    <i [class]="'bi ' + item.icon + ' h-[18px] w-[18px] shrink-0'"></i>
+                    <span
+                      class="whitespace-nowrap overflow-hidden transition-all duration-300"
+                      [class.w-0]="desktopSidebarCollapsed()"
+                      [class.opacity-0]="desktopSidebarCollapsed()"
+                      [class.opacity-100]="!desktopSidebarCollapsed()"
+                    >
+                      {{ item.name }}
+                    </span>
+                  </a>
+                </li>
+              }
+            } @else {
+              @for (entry of cooperativeNav; track entry.name) {
+                @if (entry.kind === 'link') {
+                  <li>
+                    <a
+                      [routerLink]="entry.path"
+                      [routerLinkActiveOptions]="{ exact: entry.end === true }"
+                      routerLinkActive="bg-[#0F2F8F] text-white shadow-sm"
+                      [attr.title]="desktopSidebarCollapsed() ? entry.name : null"
+                      class="flex items-center gap-3 rounded-lg px-2.5 py-2.5 text-sm font-medium text-gray-600 transition-all duration-200 hover:bg-blue-50 hover:text-[#0F2F8F]"
+                    >
+                      <i [class]="'bi ' + entry.icon + ' h-[18px] w-[18px] shrink-0'"></i>
+                      <span
+                        class="whitespace-nowrap overflow-hidden transition-all duration-300"
+                        [class.w-0]="desktopSidebarCollapsed()"
+                        [class.opacity-0]="desktopSidebarCollapsed()"
+                        [class.opacity-100]="!desktopSidebarCollapsed()"
+                      >
+                        {{ entry.name }}
+                      </span>
+                    </a>
+                  </li>
+                } @else {
+                  <li class="space-y-0.5">
+                    <button
+                      type="button"
+                      [attr.title]="desktopSidebarCollapsed() ? entry.name : null"
+                      (click)="onCalendarToggle()"
+                      class="flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-sm font-medium transition-all duration-200"
+                      [class.bg-[#0F2F8F]/12]="isCalendarActive()"
+                      [class.text-[#0F2F8F]]="isCalendarActive()"
+                      [class.text-gray-600]="!isCalendarActive()"
+                      [class.hover:bg-blue-50]="!isCalendarActive()"
+                      [class.hover:text-[#0F2F8F]]="!isCalendarActive()"
+                    >
+                      <i [class]="'bi ' + entry.icon + ' h-[18px] w-[18px] shrink-0'"></i>
+                      <span
+                        class="min-w-0 flex-1 overflow-hidden whitespace-nowrap text-left transition-all duration-300"
+                        [class.w-0]="desktopSidebarCollapsed()"
+                        [class.opacity-0]="desktopSidebarCollapsed()"
+                        [class.opacity-100]="!desktopSidebarCollapsed()"
+                      >
+                        {{ entry.name }}
+                      </span>
+                      @if (!desktopSidebarCollapsed()) {
+                        <i class="bi bi-chevron-down h-4 w-4 shrink-0 transition-transform" [class.rotate-180]="calendarExpanded()"></i>
+                      }
+                    </button>
+                    @if (calendarExpanded() && !desktopSidebarCollapsed()) {
+                      <ul class="ml-2 mt-0.5 space-y-0.5 border-l border-gray-200 pl-2.5">
+                        @for (child of entry.children; track child.path) {
+                          <li>
+                            <a
+                              [routerLink]="child.path"
+                              routerLinkActive="bg-[#0F2F8F] text-white shadow-sm"
+                              class="block rounded-lg px-2 py-2 text-xs font-medium text-gray-600 transition-all duration-200 hover:bg-blue-50 hover:text-[#0F2F8F]"
+                            >
+                              {{ child.name }}
+                            </a>
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </li>
+                }
+              }
+            }
+          </ul>
+        </nav>
+
+        <div class="border-t border-gray-200 px-2.5 py-3">
+          <div
+            class="flex cursor-pointer items-center gap-3 overflow-hidden rounded-lg px-2 py-2 hover:bg-blue-50"
+            [attr.title]="desktopSidebarCollapsed() ? (isAdmin() ? 'Government Admin' : 'Sok Pisey - Chairman') : null"
+          >
+            <img
+              [src]="profileImageUrl"
+              alt="User profile"
+              class="h-8 w-8 shrink-0 rounded-full border border-gray-200 object-cover"
+              loading="lazy"
+            />
+            <div
+              class="min-w-0 overflow-hidden transition-all duration-300"
+              [class.w-0]="desktopSidebarCollapsed()"
+              [class.opacity-0]="desktopSidebarCollapsed()"
+              [class.opacity-100]="!desktopSidebarCollapsed()"
+            >
+              <p class="truncate whitespace-nowrap text-sm font-medium text-gray-900">
+                {{ isAdmin() ? 'Government Admin' : 'Sok Pisey' }}
+              </p>
+              <p class="truncate whitespace-nowrap text-xs text-gray-500">
+                {{ isAdmin() ? (portalUser()?.email ?? 'Ministry / FAO') : 'Chairman' }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      @if (sidebarOpen()) {
+        <div class="fixed inset-0 z-40 bg-black/50 lg:hidden" (click)="sidebarOpen.set(false)"></div>
+        <aside class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-white shadow-2xl lg:hidden">
+          <div class="flex items-center justify-between border-b border-gray-200 px-6 py-5">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-lg border border-blue-100 bg-[#032EA1] shadow-md shadow-blue-500/20">
+                <i class="bi bi-leaf-fill text-green-400"></i>
+              </div>
+              <h1 class="bg-gradient-to-r from-[#032EA1] to-[#0447D4] bg-clip-text text-xl font-bold text-transparent">AgriCoop Portal</h1>
+            </div>
+            <button type="button" (click)="sidebarOpen.set(false)" class="rounded-lg p-2 hover:bg-gray-100">
+              <i class="bi bi-x-lg text-gray-500"></i>
+            </button>
+          </div>
+
+          <nav class="flex-1 overflow-y-auto px-3 py-4">
+            <ul class="space-y-1">
+              @if (isAdmin()) {
+                @for (item of adminNavigation; track item.path) {
+                  <li>
+                    <a
+                      [routerLink]="item.path"
+                      [routerLinkActiveOptions]="{ exact: item.end === true }"
+                      routerLinkActive="bg-[#032EA1] text-white shadow-md"
+                      (click)="sidebarOpen.set(false)"
+                      class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100"
+                    >
+                      <i [class]="'bi ' + item.icon + ' h-5 w-5'"></i>
+                      {{ item.name }}
+                    </a>
+                  </li>
+                }
+              } @else {
+                @for (entry of cooperativeNav; track entry.name) {
+                  @if (entry.kind === 'link') {
+                    <li>
+                      <a
+                        [routerLink]="entry.path"
+                        [routerLinkActiveOptions]="{ exact: entry.end === true }"
+                        routerLinkActive="bg-[#032EA1] text-white shadow-md"
+                        (click)="sidebarOpen.set(false)"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100"
+                      >
+                        <i [class]="'bi ' + entry.icon + ' h-5 w-5'"></i>
+                        {{ entry.name }}
+                      </a>
+                    </li>
+                  } @else {
+                    <li class="space-y-0.5">
+                      <button
+                        type="button"
+                        (click)="calendarExpanded.set(!calendarExpanded())"
+                        class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200"
+                        [class.bg-[#032EA1]/10]="isCalendarActive()"
+                        [class.text-[#032EA1]]="isCalendarActive()"
+                        [class.text-gray-700]="!isCalendarActive()"
+                        [class.hover:bg-gray-100]="!isCalendarActive()"
+                      >
+                        <i [class]="'bi ' + entry.icon + ' h-5 w-5 shrink-0'"></i>
+                        <span class="flex-1 text-left">{{ entry.name }}</span>
+                        <i class="bi bi-chevron-down h-4 w-4 shrink-0 transition-transform" [class.rotate-180]="calendarExpanded()"></i>
+                      </button>
+                      @if (calendarExpanded()) {
+                        <ul class="ml-4 mt-0.5 space-y-0.5 border-l border-gray-200 pl-3">
+                          @for (child of entry.children; track child.path) {
+                            <li>
+                              <a
+                                [routerLink]="child.path"
+                                routerLinkActive="bg-[#032EA1] text-white shadow-md"
+                                (click)="sidebarOpen.set(false)"
+                                class="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100"
+                              >
+                                {{ child.name }}
+                              </a>
+                            </li>
+                          }
+                        </ul>
+                      }
+                    </li>
+                  }
+                }
+              }
+            </ul>
+          </nav>
+
+          <div class="border-t border-gray-200 p-4">
+            <div class="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 hover:bg-gray-100">
+              <img
+                [src]="profileImageUrl"
+                alt="User profile"
+                class="h-10 w-10 rounded-full border border-gray-200 object-cover"
+                loading="lazy"
+              />
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-medium text-gray-900">
+                  {{ isAdmin() ? 'Government Admin' : 'AC User' }}
+                </p>
+                <p class="truncate text-xs text-gray-500">
+                  {{ isAdmin() ? (portalUser()?.email ?? 'Ministry / FAO') : 'President' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      }
+
+      <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header class="border-b border-gray-200 bg-white px-4 py-4 lg:px-8">
+          <div class="flex items-center justify-between">
+            <div class="flex flex-1 items-center gap-4">
+              <button type="button" (click)="sidebarOpen.set(true)" class="rounded-lg p-2 hover:bg-gray-100 lg:hidden">
+                <i class="bi bi-list text-xl text-gray-700"></i>
+              </button>
+              <div class="hidden items-center gap-3 sm:flex">
+                <i [class]="isAdmin() ? 'bi bi-shield-fill-check text-[#032EA1]' : 'bi bi-buildings-fill text-[#032EA1]'"></i>
+                <div>
+                  <p class="text-sm font-semibold text-gray-900">
+                    {{ isAdmin() ? 'Ministry / FAO' : 'Prasat Sambor Rung Roeang Modern Agricultural Cooperative' }}
+                  </p>
+                  @if (!isAdmin()) {
+                    <p class="text-xs text-gray-500">AC-KT-2024-157</p>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <div class="relative" #languageMenuRef>
+                <button
+                  type="button"
+                  (click)="languageMenuOpen.set(!languageMenuOpen())"
+                  class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-1 text-gray-700 transition-colors hover:bg-gray-50"
+                  [attr.aria-expanded]="languageMenuOpen()"
+                  aria-haspopup="dialog"
+                  aria-label="Display language"
+                >
+                  <i class="bi bi-translate"></i>
+                  <span class="tabular-nums text-sm font-medium">{{ selectedLanguage() }}</span>
+                  <i
+                    class="bi bi-chevron-down inline-flex h-4 w-4 shrink-0 items-center justify-center leading-none opacity-70 transition-transform"
+                    [class.rotate-180]="languageMenuOpen()"
+                  ></i>
+                </button>
+                @if (languageMenuOpen()) {
+                  <div class="absolute right-0 z-50 mt-1.5 w-64 rounded-xl border border-gray-200 bg-white py-0.5 shadow-lg" role="radiogroup" aria-label="Display language">
+                    <p class="border-b border-gray-100 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-gray-500">Display language</p>
+                    @for (opt of languageOptions; track opt.code) {
+                      <label
+                        class="flex cursor-pointer items-center gap-2 px-2.5 py-1.5 text-left text-sm leading-tight transition-colors hover:bg-gray-50"
+                        [class.bg-[#032EA1]/[0.06]]="selectedLanguage() === opt.code"
+                      >
+                        <input
+                          type="radio"
+                          name="navbar-display-language"
+                          [value]="opt.code"
+                          [checked]="selectedLanguage() === opt.code"
+                          (change)="onLanguageChange(opt.code)"
+                          class="h-3.5 w-3.5 shrink-0 cursor-pointer accent-[#032EA1] border-gray-300 focus:ring-2 focus:ring-[#032EA1] focus:ring-offset-0"
+                        />
+                        <span class="min-w-0 flex-1">
+                          <span class="block leading-tight font-medium text-gray-800">{{ opt.label }}</span>
+                          <span class="mt-0.5 block text-[11px] leading-tight text-gray-500">{{ opt.native }}</span>
+                        </span>
+                      </label>
+                    }
+                    <p class="border-t border-gray-100 px-2.5 py-1.5 text-[10px] leading-snug text-gray-500">
+                      Select one language. The app UI can be wired to this choice later.
+                    </p>
+                  </div>
+                }
+              </div>
+
+              <div class="relative" #notifRef>
+                <button
+                  type="button"
+                  (click)="toggleNotifications()"
+                  class="relative rounded-lg p-2 transition-colors hover:bg-gray-100"
+                  aria-label="Notifications"
+                  [attr.aria-expanded]="notifOpen()"
+                >
+                  <i class="bi bi-bell text-gray-700"></i>
+                  @if (unreadCount() > 0) {
+                    <span class="absolute right-1 top-1 h-2 min-w-[8px] rounded-full bg-[#E00025] px-0.5"></span>
+                  }
+                </button>
+                @if (notifOpen()) {
+                  <div class="absolute right-0 z-50 mt-1.5 max-h-96 w-80 overflow-y-auto rounded-xl border border-gray-200 bg-white py-2 shadow-lg">
+                    <p class="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wide text-gray-500">
+                      In-app notifications
+                    </p>
+                    @if (notificationsList().length === 0) {
+                      <p class="px-3 py-4 text-sm text-gray-500">No notifications yet.</p>
+                    } @else {
+                      <ul class="divide-y divide-gray-100">
+                        @for (n of notificationsList(); track n.id) {
+                          <li class="px-3 py-2.5 text-sm">
+                            <p class="font-medium leading-tight text-gray-900">{{ n.title }}</p>
+                            <p class="mt-1 text-xs leading-snug text-gray-600">{{ n.body }}</p>
+                            @if (n.audience) {
+                              <p class="mt-1 text-[10px] text-gray-400">To: {{ n.audience }}</p>
+                            }
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </div>
+                }
+              </div>
+
+              <button
+                type="button"
+                (click)="logout()"
+                class="rounded-lg p-2 text-gray-700 transition-colors hover:bg-gray-100 hover:text-[#E00025]"
+                aria-label="Log out"
+              >
+                <i class="bi bi-box-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 overflow-auto p-4 lg:p-8">
+          <router-outlet />
+        </main>
+      </div>
+    </div>
+    @if (!isAdmin()) {
+      <app-chatbot-widget />
+    }
+  

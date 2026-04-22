@@ -1,0 +1,355 @@
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">{{ isEditMode() ? 'Edit Member Profile' : 'Member Profile' }}</h1>
+          <p class="mt-1 text-gray-600">
+            @if (isEditMode() && memberData()) {
+              Update profile for {{ memberData()!.fullName }}
+            } @else {
+              Create a complete member profile with land and crop details.
+            }
+          </p>
+        </div>
+        <button type="button" (click)="goMembers()" class="btn btn-sm btn-outline-neutral">
+          <i class="bi bi-arrow-left"></i>
+          Back to Members
+        </button>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div class="border-b border-gray-200">
+          <div class="flex overflow-x-auto">
+            @for (tab of tabs; track tab.id) {
+              <button
+                type="button"
+                (click)="activeTab.set(tab.id)"
+                class="whitespace-nowrap px-6 py-4 text-sm font-medium transition-colors"
+                [ngClass]="{
+                  'u-text-primary border-b-2 u-border-primary': activeTab() === tab.id,
+                  'text-gray-600': activeTab() !== tab.id
+                }"
+              >
+                {{ tab.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="p-6">
+          @if (activeTab() === 'profile') {
+            <div class="space-y-6">
+              <h3 class="text-lg font-semibold text-gray-900">Profile Records</h3>
+              <div class="flex gap-6">
+                <div class="w-1/4 shrink-0">
+                  <div class="h-full rounded-xl border border-slate-200 u-bg-primary-gradient p-5 shadow-sm">
+                    <p class="mb-4 text-center text-sm font-semibold text-white">Profile Photo</p>
+
+                    <div
+                      class="relative mx-auto h-40 w-40 overflow-hidden rounded-full border-2 border-dashed transition-all duration-200"
+                      [ngClass]="{
+                        'u-border-primary bg-blue-50 scale-105': isDragging(),
+                        'border-transparent': profileImage(),
+                        'border-slate-300': !profileImage() && !isDragging()
+                      }"
+                      (drop)="onImageDrop($event)"
+                      (dragover)="onImageDragOver($event)"
+                      (dragleave)="isDragging.set(false)"
+                    >
+                      @if (profileImage()) {
+                        <img [src]="profileImage()!" alt="Profile" class="h-full w-full object-cover" />
+                        <button
+                          type="button"
+                          (click)="removeImage()"
+                          class="absolute right-1 top-1 rounded-full bg-red-500 p-1.5 text-white shadow-lg transition-colors hover:bg-red-600"
+                        >
+                          <i class="bi bi-x-lg text-[11px]"></i>
+                        </button>
+                      } @else {
+                        <button
+                          type="button"
+                          (click)="profileFileInput.click()"
+                          class="flex h-full w-full cursor-pointer flex-col items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 transition-all hover:from-slate-50 hover:to-slate-100"
+                        >
+                          <div class="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-inner">
+                            <i class="bi bi-person text-3xl text-slate-400"></i>
+                          </div>
+                          <i class="bi bi-camera text-lg text-slate-500"></i>
+                        </button>
+                      }
+                    </div>
+
+                    <input #profileFileInput type="file" accept="image/*" class="hidden" (change)="onProfileImageChange($event)" />
+
+                    <div class="mt-4 text-center">
+                      <button type="button" (click)="profileFileInput.click()" class="btn btn-sm btn-outline-primary bg-blue-50 hover:bg-blue-100">
+                        <i class="bi bi-upload"></i>
+                        {{ profileImage() ? 'Change Photo' : 'Upload Photo' }}
+                      </button>
+                      <p class="mt-2 text-xs text-slate-500">JPG, PNG or GIF<br />Max 5MB</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex-1 space-y-4">
+                  <div class="rounded-xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4 shadow-sm">
+                    <p class="mb-3 text-sm font-semibold text-slate-800">Identity & Contacts</p>
+                    <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
+                      <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-600">Name w/ initial <span class="text-red-500">*</span></label>
+                        <input [(ngModel)]="formData.nameWithInitial" type="text" placeholder="Enter name with initials" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-600">Full Name <span class="text-red-500">*</span></label>
+                        <input [(ngModel)]="formData.fullName" type="text" placeholder="Enter full name" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-600">Phone No</label>
+                        <input [(ngModel)]="formData.mobilePhone" type="tel" placeholder="Enter mobile phone" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-600">NIC/PP No</label>
+                        <input [(ngModel)]="formData.nicPpNo" type="text" placeholder="Enter NIC/PP number" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-600">Gender</label>
+                        <select [(ngModel)]="formData.gender" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary">
+                          <option value="">Select gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="rounded-xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4 shadow-sm">
+                    <p class="mb-3 text-sm font-semibold text-slate-800">Location & Reference</p>
+                    <div class="grid grid-cols-1 gap-3 md:grid-cols-4">
+                      <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-600">Address <span class="text-red-500">*</span></label>
+                        <input [(ngModel)]="formData.address" type="text" placeholder="Enter address" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-600">City</label>
+                        <input [(ngModel)]="formData.city" type="text" placeholder="Enter city" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-600">Zip</label>
+                        <input type="text" placeholder="Enter zip code" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                      </div>
+                      <div>
+                        <label class="mb-1 block text-xs font-medium text-slate-600">Region</label>
+                        <input [(ngModel)]="formData.region" type="text" placeholder="Enter region" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (activeTab() === 'land') {
+            <div class="relative min-h-[420px]">
+              <div class="flex w-full flex-col">
+                <div class="flex items-center justify-between pb-3">
+                  <h3 class="text-base font-semibold text-gray-900">Land Records</h3>
+                  @if (!landPanelOpen()) {
+                    <button type="button" (click)="openNewLand()" class="btn btn-sm btn-primary">
+                      <i class="bi bi-plus-lg"></i> Add Land
+                    </button>
+                  }
+                </div>
+                <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_4px_24px_-4px_rgba(3,46,161,0.08),0_2px_8px_-2px_rgba(0,0,0,0.06)]">
+                  <div class="w-full min-w-0 overflow-hidden">
+                    <table class="w-full table-fixed border-collapse text-left">
+                      <colgroup><col class="w-[22%]" /><col class="w-[18%]" /><col class="w-[14%]" /><col class="w-[34%]" /><col class="w-[12%]" /></colgroup>
+                      <thead>
+                        <tr class="u-table-brand-head-row">
+                          <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Land Name</th>
+                          <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Extend (Ha)</th>
+                          <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Status</th>
+                          <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Certification</th>
+                          <th class="px-3 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-100">
+                        @for (row of landRows(); track $index; let i = $index) {
+                          <tr class="group cursor-pointer transition-colors u-hover-bg-primary-soft" [class.bg-white]="i % 2 === 0" [class.bg-slate-50/60]="i % 2 !== 0" (click)="openEditLand(i)">
+                            <td class="px-3 py-2.5 align-middle"><span class="text-xs font-semibold text-gray-900 sm:text-sm">{{ row.name }}</span></td>
+                            <td class="px-3 py-2.5 align-middle"><span class="text-xs font-semibold tabular-nums text-gray-900 sm:text-sm">{{ row.extend }}</span></td>
+                            <td class="px-3 py-2.5 align-middle">
+                              <span
+                                class="inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold sm:text-xs"
+                                [ngClass]="{
+                                  'bg-teal-50 text-teal-800 border-teal-200': row.status === 'Active',
+                                  'bg-red-50 text-red-800 border-red-200': row.status !== 'Active'
+                                }"
+                              >
+                                {{ row.status }}
+                              </span>
+                            </td>
+                            <td class="px-3 py-2.5 align-middle"><span class="text-xs leading-snug text-gray-700">{{ row.certifications.join(', ') || '—' }}</span></td>
+                            <td class="px-3 py-2.5 align-middle">
+                              <div class="flex items-center justify-center gap-0.5" (click)="$event.stopPropagation()">
+                                <button class="rounded-lg p-1.5 u-text-primary transition-colors hover:bg-blue-50" (click)="openEditLand(i)"><i class="bi bi-pencil"></i></button>
+                                <button class="rounded-lg p-1.5 text-red-600 transition-colors hover:bg-red-50" (click)="deleteLand(i)"><i class="bi bi-trash"></i></button>
+                              </div>
+                            </td>
+                          </tr>
+                        }
+                        @if (landRows().length === 0) {
+                          <tr><td colspan="5" class="px-4 py-10 text-center text-sm text-gray-400">No land records yet. Click "Add Land" to get started.</td></tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (activeTab() === 'crops') {
+            <div class="relative min-h-[420px]">
+              <div class="flex w-full flex-col">
+                <div class="flex items-center justify-between pb-3">
+                  <h3 class="text-base font-semibold text-gray-900">Crop Records</h3>
+                  @if (!cropPanelOpen()) { <button type="button" (click)="openNewCrop()" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add Crop</button> }
+                </div>
+                <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_4px_24px_-4px_rgba(3,46,161,0.08),0_2px_8px_-2px_rgba(0,0,0,0.06)]">
+                  <div class="w-full min-w-0 overflow-hidden">
+                    <table class="w-full table-fixed border-collapse text-left">
+                      <colgroup><col class="w-[20%]" /><col class="w-[20%]" /><col class="w-[26%]" /><col class="w-[20%]" /><col class="w-[14%]" /></colgroup>
+                      <thead><tr class="u-table-brand-head-row"><th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Land Name</th><th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Crop Name</th><th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Expected Yield / Year</th><th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Number of Plants/area</th><th class="px-3 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Actions</th></tr></thead>
+                      <tbody class="divide-y divide-gray-100">
+                        @for (row of cropRows(); track $index; let i = $index) {
+                          <tr
+                            class="group cursor-pointer transition-colors u-hover-bg-primary-soft"
+                            [ngClass]="{ 'bg-white': i % 2 === 0, 'bg-slate-50/60': i % 2 !== 0 }"
+                            (click)="openEditCrop(i)"
+                          >
+                            <td class="px-3 py-2.5"><span class="text-xs font-semibold text-gray-900 sm:text-sm">{{ row.landName }}</span></td>
+                            <td class="px-3 py-2.5"><span class="text-xs text-gray-700 sm:text-sm">{{ row.cropName }}</span></td>
+                            <td class="px-3 py-2.5"><span class="text-xs font-semibold tabular-nums text-gray-900 sm:text-sm">{{ row.yield }}</span></td>
+                            <td class="px-3 py-2.5"><span class="text-xs text-gray-700 sm:text-sm">{{ row.plants || '—' }}</span></td>
+                            <td class="px-3 py-2.5"><div class="flex items-center justify-center gap-0.5" (click)="$event.stopPropagation()"><button class="rounded-lg p-1.5 u-text-primary transition-colors hover:bg-blue-50" (click)="openEditCrop(i)"><i class="bi bi-pencil"></i></button><button class="rounded-lg p-1.5 text-red-600 transition-colors hover:bg-red-50" (click)="deleteCrop(i)"><i class="bi bi-trash"></i></button></div></td>
+                          </tr>
+                        }
+                        @if (cropRows().length === 0) { <tr><td colspan="5" class="px-4 py-10 text-center text-sm text-gray-400">No crop records yet. Click "Add Crop" to get started.</td></tr> }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (activeTab() === 'dossier') {
+            <div class="relative min-h-[420px]">
+              <div class="flex w-full flex-col">
+                <div class="flex items-center justify-between pb-3">
+                  <h3 class="text-base font-semibold text-gray-900">Document Dossier</h3>
+                  @if (!docPanelOpen()) { <button type="button" (click)="openNewDoc()" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add Document</button> }
+                </div>
+                <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_4px_24px_-4px_rgba(3,46,161,0.08),0_2px_8px_-2px_rgba(0,0,0,0.06)]">
+                  <div class="w-full min-w-0 overflow-hidden">
+                    <table class="w-full table-fixed border-collapse text-left">
+                      <colgroup><col class="w-[30%]" /><col class="w-[22%]" /><col class="w-[20%]" /><col class="w-[16%]" /><col class="w-[12%]" /></colgroup>
+                      <thead><tr class="u-table-brand-head-row"><th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Document Name</th><th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Land Name</th><th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Upload Date</th><th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">File Size</th><th class="px-3 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Actions</th></tr></thead>
+                      <tbody class="divide-y divide-gray-100">
+                        @for (row of docRows(); track $index; let i = $index) {
+                          <tr
+                            class="group cursor-pointer transition-colors u-hover-bg-primary-soft"
+                            [ngClass]="{ 'bg-white': i % 2 === 0, 'bg-slate-50/60': i % 2 !== 0 }"
+                            (click)="openEditDoc(i)"
+                          >
+                            <td class="px-3 py-2.5"><div class="flex min-w-0 items-center gap-1.5"><i class="bi bi-file-earmark-text u-text-primary"></i><span class="truncate text-xs font-semibold text-gray-900 sm:text-sm">{{ row.docName }}</span></div></td>
+                            <td class="px-3 py-2.5"><span class="text-xs text-gray-700 sm:text-sm">{{ row.landName || '—' }}</span></td>
+                            <td class="px-3 py-2.5"><span class="text-xs text-gray-700 sm:text-sm">{{ row.uploadDate || '—' }}</span></td>
+                            <td class="px-3 py-2.5"><span class="text-xs font-semibold tabular-nums text-gray-900 sm:text-sm">{{ row.fileSize || '—' }}</span></td>
+                            <td class="px-3 py-2.5"><div class="flex items-center justify-center gap-0.5" (click)="$event.stopPropagation()"><button class="rounded-lg p-1.5 u-text-primary transition-colors hover:bg-blue-50" (click)="openEditDoc(i)"><i class="bi bi-pencil"></i></button><button class="rounded-lg p-1.5 text-red-600 transition-colors hover:bg-red-50" (click)="deleteDoc(i)"><i class="bi bi-trash"></i></button></div></td>
+                          </tr>
+                        }
+                        @if (docRows().length === 0) { <tr><td colspan="5" class="px-4 py-10 text-center text-sm text-gray-400">No documents yet. Click "Add Document" to upload one.</td></tr> }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4">
+          <button type="button" (click)="goMembers()" class="btn btn-sm btn-outline-neutral px-6">Cancel</button>
+          <div class="flex items-center gap-3">
+            @if (activeTab() === 'profile') {
+              <button type="button" (click)="activeTab.set('land')" class="btn btn-sm btn-primary px-6">
+                {{ isEditMode() ? 'Update Member' : 'Save & Next' }}
+              </button>
+            }
+            @if (activeTab() === 'land') { <button type="button" (click)="activeTab.set('crops')" class="btn btn-sm btn-primary px-6">Next</button> }
+            @if (activeTab() === 'crops') { <button type="button" (click)="activeTab.set('dossier')" class="btn btn-sm btn-primary px-6">Next</button> }
+          </div>
+        </div>
+      </div>
+
+      @if (landPanelOpen()) {
+        <div class="fixed inset-0 z-[1200] bg-black/40 transition-opacity duration-200" [class.opacity-100]="landPanelVisible()" [class.opacity-0]="!landPanelVisible()" (click)="closeLandPanel()"></div>
+        <div class="fixed inset-y-0 right-0 z-[1210] flex w-full max-w-md flex-col border-l border-gray-200 bg-gray-50 shadow-2xl transition-transform duration-200 ease-in-out" [class.translate-x-0]="landPanelVisible()" [class.translate-x-full]="!landPanelVisible()">
+          <div class="shrink-0 border-b border-white/10 u-bg-primary-gradient px-5 py-3"><div class="flex items-center justify-between"><h4 class="text-sm font-semibold text-white">{{ landEditRow() !== null ? 'Edit Land Record' : 'New Land Record' }}</h4><button type="button" (click)="closeLandPanel()" class="rounded-lg p-1.5 text-white/90 hover:bg-white/15"><i class="bi bi-x-lg"></i></button></div></div>
+          <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Land Name <span class="text-red-500">*</span></label><input [(ngModel)]="landForm.name" type="text" placeholder="e.g., North Rice Field" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Land Extend (Ha) <span class="text-red-500">*</span></label><input [(ngModel)]="landForm.extend" type="number" step="0.01" placeholder="0.00" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Status <span class="text-red-500">*</span></label><select [(ngModel)]="landForm.status" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select Status</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select></div>
+            <div>
+              <label class="mb-1 block text-xs font-medium text-gray-600">Certifications</label>
+              <div class="relative" #certDropdownRef>
+                <button type="button" (click)="certDropdownOpen.set(!certDropdownOpen())" class="flex w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-3 py-2 text-left text-sm outline-none u-focus-ring-primary">
+                  <span [class.text-gray-400]="landForm.certifications.length === 0" class="truncate">{{ landForm.certifications.length === 0 ? 'Select certifications' : landForm.certifications.join(', ') }}</span>
+                  <i class="bi bi-chevron-down transition-transform" [class.rotate-180]="certDropdownOpen()"></i>
+                </button>
+                @if (certDropdownOpen()) {
+                  <div class="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
+                    @for (cert of certOptions; track cert) {
+                      <label class="flex cursor-pointer select-none items-center gap-3 px-4 py-2.5 transition-colors hover:bg-blue-50">
+                        <input type="checkbox" [checked]="landForm.certifications.includes(cert)" (change)="toggleCert(cert)" class="h-4 w-4 rounded border-gray-300 u-accent-primary" />
+                        <span class="text-sm text-gray-700">{{ cert }}</span>
+                      </label>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-white px-5 py-3"><button type="button" (click)="closeLandPanel()" class="btn btn-sm btn-outline-neutral">Cancel</button><button type="button" (click)="saveLand()" class="btn btn-sm btn-primary">{{ landEditRow() !== null ? 'Update' : 'Add Land' }}</button></div>
+        </div>
+      }
+
+      @if (cropPanelOpen()) {
+        <div class="fixed inset-0 z-[1200] bg-black/40 transition-opacity duration-200" [class.opacity-100]="cropPanelVisible()" [class.opacity-0]="!cropPanelVisible()" (click)="closeCropPanel()"></div>
+        <div class="fixed inset-y-0 right-0 z-[1210] flex w-full max-w-md flex-col border-l border-gray-200 bg-gray-50 shadow-2xl transition-transform duration-200 ease-in-out" [class.translate-x-0]="cropPanelVisible()" [class.translate-x-full]="!cropPanelVisible()">
+          <div class="shrink-0 border-b border-white/10 u-bg-primary-gradient px-5 py-3"><div class="flex items-center justify-between"><h4 class="text-sm font-semibold text-white">{{ cropEditRow() !== null ? 'Edit Crop Record' : 'New Crop Record' }}</h4><button type="button" (click)="closeCropPanel()" class="rounded-lg p-1.5 text-white/90 hover:bg-white/15"><i class="bi bi-x-lg"></i></button></div></div>
+          <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Land Name <span class="text-red-500">*</span></label><select [(ngModel)]="cropForm.landName" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select Land</option>@for (l of landRows(); track l.name) { <option [value]="l.name">{{ l.name }}</option> }</select></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Crop Name <span class="text-red-500">*</span></label><select [(ngModel)]="cropForm.cropName" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select Crop</option>@for (c of cropOptions; track c) { <option [value]="c">{{ c }}</option> }</select></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Expected Yield Per Year <span class="text-red-500">*</span></label><input [(ngModel)]="cropForm.yield" type="text" placeholder="e.g., 3.5 tons/ha" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Number of Plants/area</label><input [(ngModel)]="cropForm.plants" type="text" placeholder="e.g., 1000 plants or 500 kg/ha" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+          </div>
+          <div class="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-white px-5 py-3"><button type="button" (click)="closeCropPanel()" class="btn btn-sm btn-outline-neutral">Cancel</button><button type="button" (click)="saveCrop()" class="btn btn-sm btn-primary">{{ cropEditRow() !== null ? 'Update' : 'Add Crop' }}</button></div>
+        </div>
+      }
+
+      @if (docPanelOpen()) {
+        <div class="fixed inset-0 z-[1200] bg-black/40 transition-opacity duration-200" [class.opacity-100]="docPanelVisible()" [class.opacity-0]="!docPanelVisible()" (click)="closeDocPanel()"></div>
+        <div class="fixed inset-y-0 right-0 z-[1210] flex w-full max-w-md flex-col border-l border-gray-200 bg-gray-50 shadow-2xl transition-transform duration-200 ease-in-out" [class.translate-x-0]="docPanelVisible()" [class.translate-x-full]="!docPanelVisible()">
+          <div class="shrink-0 border-b border-white/10 u-bg-primary-gradient px-5 py-3"><div class="flex items-center justify-between"><h4 class="text-sm font-semibold text-white">{{ docEditRow() !== null ? 'Edit Document' : 'New Document' }}</h4><button type="button" (click)="closeDocPanel()" class="rounded-lg p-1.5 text-white/90 hover:bg-white/15"><i class="bi bi-x-lg"></i></button></div></div>
+          <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4">
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Document Name <span class="text-red-500">*</span></label><input [(ngModel)]="docForm.docName" type="text" placeholder="e.g., Land Certificate" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary" /></div>
+            <div><label class="mb-1 block text-xs font-medium text-gray-600">Land Name</label><select [(ngModel)]="docForm.landName" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-transparent u-focus-ring-primary"><option value="">Select Land</option>@for (l of landRows(); track l.name) { <option [value]="l.name">{{ l.name }}</option> }</select></div>
+            <div><label class="mb-2 block text-xs font-medium text-gray-600">File</label><label class="block cursor-pointer"><input type="file" class="sr-only" (change)="onDocFileChange($event)" /><div class="rounded-lg border border-dashed border-slate-300 bg-white px-4 py-5 text-center transition-colors u-hover-border-primary-soft"><i class="bi bi-upload mb-1.5 text-2xl text-gray-400"></i>@if (docForm.fileName) { <p class="text-sm font-medium u-text-primary">{{ docForm.fileName }}</p> } @else { <p class="text-sm text-gray-600">Drag & drop or click to select</p><p class="mt-0.5 text-xs text-gray-400">PDF, DOC, DOCX, JPG, PNG (Max 10MB)</p> }</div></label></div>
+          </div>
+          <div class="flex shrink-0 justify-end gap-2 border-t border-gray-200 bg-white px-5 py-3"><button type="button" (click)="closeDocPanel()" class="btn btn-sm btn-outline-neutral">Cancel</button><button type="button" (click)="saveDoc()" class="btn btn-sm btn-primary">{{ docEditRow() !== null ? 'Update' : 'Add Document' }}</button></div>
+        </div>
+      }
+    </div>
+  

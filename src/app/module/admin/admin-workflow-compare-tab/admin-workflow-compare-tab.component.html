@@ -1,0 +1,42 @@
+    <div class="space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="text-base font-semibold text-slate-900">Side-by-side target vs actual</h2>
+        <input
+          [(ngModel)]="searchText"
+          placeholder="Search indicators..."
+          class="h-9 w-60 rounded-lg border border-slate-300 px-3 text-sm"
+        />
+      </div>
+
+      <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <table class="w-full min-w-[780px] text-left text-sm">
+          <thead class="bg-slate-50 text-slate-700">
+            <tr>
+              <th class="px-3 py-2">Indicator</th>
+              <th class="px-3 py-2">AC-BB-2024-157 target</th>
+              <th class="px-3 py-2">AC-BB-2024-157 actual</th>
+              <th class="px-3 py-2">AC-SR-2023-088 target</th>
+              <th class="px-3 py-2">AC-SR-2023-088 actual</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of filteredRows(); track row.indicator) {
+              <tr class="border-t border-slate-200">
+                <td class="px-3 py-2 font-medium text-slate-900">{{ row.indicator }}</td>
+                <td class="px-3 py-2 text-slate-700">{{ row.aTarget }}</td>
+                <td class="px-3 py-2"><span class="rounded-full bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700">{{ row.aActual }}</span></td>
+                <td class="px-3 py-2 text-slate-700">{{ row.bTarget }}</td>
+                <td class="px-3 py-2"><span class="rounded-full bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700">{{ row.bActual }}</span></td>
+              </tr>
+            }
+
+            @if (filteredRows().length === 0) {
+              <tr>
+                <td colspan="5" class="px-4 py-8 text-center text-slate-500">No indicators match your search.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
