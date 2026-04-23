@@ -40,14 +40,17 @@ export const adminOnlyMatchGuard: CanMatchFn = () => {
   );
 };
 
-export const cooperativeOnlyGuard: CanActivateFn = () => {
+export const cooperativeOnlyGuard: CanActivateFn = (_route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
   return auth.validateStoredSession().pipe(
     map((valid) => {
       if (!valid) return router.createUrlTree([`/${APP_PATHS.login}`]);
-      return auth.isGovernmentAdmin() ? router.createUrlTree([ADMIN_PATHS.home]) : true;
+      if (!auth.isGovernmentAdmin()) return true;
+      // Prevent redirect loops when admin routes are nested under dashboard children.
+      if (state.url.startsWith(ADMIN_PATHS.home)) return true;
+      return router.createUrlTree([ADMIN_PATHS.home]);
     })
   );
 };
