@@ -55,38 +55,38 @@
               </div>
 
               <div class="w-full min-w-0 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_4px_24px_-4px_rgba(3,46,161,0.08),0_2px_8px_-2px_rgba(0,0,0,0.06)]">
-                <div class="w-full min-w-0 overflow-hidden">
-                  <table class="w-full table-fixed border-collapse text-left">
+                <div class="w-full min-w-0 overflow-x-auto">
+                  <table class="min-w-[980px] w-full table-auto border-collapse text-left">
                     <colgroup>
-                      <col class="w-[10%]" /><col class="w-[22%]" /><col class="w-[12%]" /><col class="w-[14%]" /><col class="w-[9%]" />
-                      <col class="w-[9%]" /><col class="w-[9%]" /><col class="w-[10%]" /><col class="w-[5%]" />
+                      <col class="w-[10%]" /><col class="w-[21%]" /><col class="w-[13%]" /><col class="w-[14%]" /><col class="w-[9%]" />
+                      <col class="w-[9%]" /><col class="w-[9%]" /><col class="w-[9%]" /><col class="w-[6%]" />
                     </colgroup>
                     <thead>
                       <tr class="u-table-brand-head-row">
-                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Asset ID</th>
-                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Asset</th>
-                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Type</th>
-                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Acquisition</th>
-                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Value</th>
-                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Condition</th>
-                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Asset Status</th>
-                        <th class="px-2 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Status</th>
-                        <th class="px-2 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider u-text-primary sm:px-3 sm:text-[11px]">Actions</th>
+                        <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Asset ID</th>
+                        <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Asset</th>
+                        <th class="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Type</th>
+                        <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Acquisition</th>
+                        <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Value</th>
+                        <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Condition</th>
+                        <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Asset Status</th>
+                        <th class="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Status</th>
+                        <th class="px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-wider u-text-primary sm:text-[11px]">Actions</th>
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                       @for (asset of assets(); track asset.id; let rowIdx = $index) {
                         <tr class="group transition-colors u-hover-bg-primary-soft" [class.bg-white]="rowIdx % 2 === 0" [class.bg-slate-50/60]="rowIdx % 2 !== 0">
-                          <td class="min-w-[5.5rem] whitespace-nowrap px-2 py-2.5 align-middle sm:px-3">
+                          <td class="min-w-[5.5rem] whitespace-nowrap px-3 py-2.5 align-middle">
                             <span class="inline-flex whitespace-nowrap rounded-md border u-chip-id px-2 py-0.5 font-mono text-[10px] font-semibold sm:text-xs">{{ asset.id }}</span>
                           </td>
-                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="line-clamp-2 text-xs font-semibold leading-snug text-gray-900 sm:text-sm">{{ asset.name }}</span></td>
-                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3">
-                            <span class="inline-flex items-center gap-1.5 rounded-md border border-gray-200/90 bg-gray-100 px-2 py-1 text-[11px] font-medium text-gray-800"><i class="bi bi-box-seam opacity-70"></i><span>{{ asset.type }}</span></span>
+                          <td class="max-w-0 px-3 py-2.5 align-middle"><span class="line-clamp-2 text-xs font-semibold leading-snug text-gray-900 sm:text-sm">{{ asset.name }}</span></td>
+                          <td class="max-w-0 px-3 py-2.5 text-left align-middle">
+                            <span class="inline-flex items-center justify-start gap-1.5 rounded-md border border-gray-200/90 bg-gray-100 px-2 py-1 text-[11px] font-medium text-gray-800"><i class="bi bi-box-seam opacity-70"></i><span>{{ asset.type }}</span></span>
                           </td>
-                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="line-clamp-2 text-xs leading-snug text-gray-700">{{ asset.acquisitionMethod }}</span></td>
-                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><span class="text-xs font-semibold tabular-nums text-gray-900 sm:text-sm">{{ asset.value }}</span></td>
-                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3">
+                          <td class="max-w-0 px-3 py-2.5 align-middle"><span class="line-clamp-2 text-xs leading-snug text-gray-700">{{ asset.acquisitionMethod }}</span></td>
+                          <td class="max-w-0 px-3 py-2.5 align-middle"><span class="text-xs font-semibold tabular-nums text-gray-900 sm:text-sm">{{ asset.value }}</span></td>
+                          <td class="max-w-0 px-3 py-2.5 align-middle">
                             <button
                               type="button"
                               (click)="openConditionModal(asset)"
@@ -100,7 +100,7 @@
                               {{ asset.condition }}
                             </button>
                           </td>
-                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3">
+                          <td class="max-w-0 px-3 py-2.5 align-middle">
                             <span
                               class="inline-flex max-w-full items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold sm:text-xs"
                               [ngClass]="{
@@ -111,14 +111,19 @@
                               {{ asset.assetStatus }}
                             </span>
                           </td>
-                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3">
+                          <td class="max-w-0 px-3 py-2.5 align-middle">
                             @if (asset.status === 'Verified') {
                               <span class="inline-flex items-center gap-0.5 rounded-full bg-emerald-500 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:px-2 sm:text-xs"><i class="bi bi-check-circle-fill"></i><span class="truncate">Verified</span></span>
                             } @else {
                               <span class="inline-flex max-w-full items-center gap-0.5 rounded-full border border-amber-200 bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-900 sm:px-2 sm:text-xs"><i class="bi bi-clock"></i><span class="truncate">Pending</span></span>
                             }
                           </td>
-                          <td class="max-w-0 px-2 py-2.5 align-middle sm:px-3"><div class="flex items-center justify-center gap-0.5"><button type="button" class="rounded-lg p-1.5 text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700"><i class="bi bi-eye"></i></button><button type="button" (click)="openEditModal(asset)" class="rounded-lg p-1.5 text-emerald-600 transition-colors hover:bg-emerald-50 hover:text-emerald-700"><i class="bi bi-pencil"></i></button></div></td>
+                          <td class="max-w-0 px-3 py-2.5 text-left align-middle">
+                            <div class="flex min-w-[52px] items-center justify-start gap-0.5">
+                              <button type="button" class="rounded-lg p-1.5 text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700"><i class="bi bi-eye"></i></button>
+                              <button type="button" (click)="openEditModal(asset)" class="rounded-lg p-1.5 text-emerald-600 transition-colors hover:bg-emerald-50 hover:text-emerald-700"><i class="bi bi-pencil"></i></button>
+                            </div>
+                          </td>
                         </tr>
                       }
                     </tbody>
